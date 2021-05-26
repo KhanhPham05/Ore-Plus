@@ -1,0 +1,10 @@
+{
+  "block.rawores.ore_enricher": "Ore Enricher",
+  "block.rawores.raw_gold_block": "Raw Gold Block",
+  "block.rawores.raw_iron_block": "Raw Iron Block",
+  "block.rawores.rich_coal_ore": "Rich Coal Ore",
+  "block.rawores.rich_gold_ore": "Rich Gold Ore",
+  "block.rawores.rich_iron_ore": "Rich iron Ore",
+  "container.rawores.enricher": "Ore Enricher",
+  "jei.raw_ores.ore_enriching": "Ore Enriching"
+}
