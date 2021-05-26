@@ -5,6 +5,7 @@ bc41dd00637a07afdda37fd6b82e2e56b66ef431 assets/rawores/lang/en_us.json
 095719562672df0044f4a2eeb93417b9f6228d3d assets/rawores/models/block/ore_enricher.json
 f596bcd9bc5431b10327db8811ac8044ce207f9b assets/rawores/models/block/raw_iron_block.json
 5a0db8bcc7323879595a6d37b16ba5dccb639a5c assets/rawores/models/block/rich_iron_ore.json
+b47e2871d9fc213acbd0568802ad1afa84c62e30 assets/rawores/models/item/enriching_element.json
 af2a03200780322ba056a0b19f5571f9da2de8de assets/rawores/models/item/ore_enricher.json
 6c53abdf6f83b1071505bb3877d5f29e33bbcfcb assets/rawores/models/item/raw_copper.json
 6c4e6bb665ba1de85195fed19d998400974df347 assets/rawores/models/item/raw_gold.json
@@ -20,4 +21,5 @@ e930e10d3d678de515078bd4bcf0efe747a1fd12 data/rawores/loot_tables/blocks/raw_gol
 9f4b98c320fff0120030a993e48f9dd04c29a659 data/rawores/loot_tables/blocks/rich_gold_ore.json
 db4fd06a2aa92d588a811559b981dc52527329ad data/rawores/loot_tables/blocks/rich_iron_ore.json
 ec7dab8842e50b14dac9ded34c9e32c1438bcef4 data/rawores/recipes/craft_enricher.json
+464358ff9c0d75d1bc116b6d2e13afd056d15d92 data/rawores/recipes/enrich_ore_iron.json
 64a8256d9e916925f736422bc62a462886f14ede data/rawores/recipes/iron_ore_from_raw.json

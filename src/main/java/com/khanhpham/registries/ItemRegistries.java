@@ -15,7 +15,7 @@ public class ItemRegistries {
     public static final RegistryObject<Item> COPPER_RAW_ORE = registryRawOre("raw_copper");
     public static final RegistryObject<Item> RAW_DIAMOND = registryRawOre("raw_diamond");
     public static final RegistryObject<Item> RICH_COAL = register("rich_coal");
-
+    public static final RegistryObject<Item> ENRICHING_ELEMENT = register("enriching_element");
     /**
      * @see net.minecraft.item.Items
      */

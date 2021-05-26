@@ -8,39 +8,44 @@ import net.minecraft.data.DataGenerator;
 import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
-public class ItemModelProvider extends net.minecraftforge.client.model.generators.ItemModelProvider {
-    public ItemModelProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-        super(generator, RawOres.MODID, existingFileHelper);
+public class ModelProvider {
+
+    public static final class Item extends net.minecraftforge.client.model.generators.ItemModelProvider {
+        public Item(DataGenerator generator, ExistingFileHelper existingFileHelper) {
+            super(generator, RawOres.MODID, existingFileHelper);
+        }
+
+        @Override
+        protected void registerModels() {
+            block("rich_iron_ore");
+            block("raw_iron_block");
+            withExistingParent("ore_enricher", modLoc("block/ore_enricher"));
+            ModelFile file = getExistingFile(mcLoc("item/generated"));
+
+            build(file, "raw_iron");
+            build(file, "raw_copper");
+            build(file, "raw_gold");
+            build(file, "enriching_element");
+        }
+
+        private void build(ModelFile file, String path) {
+            getBuilder(path).parent(file).texture("layer0", "item/" + path);
+        }
+
+        private void block(String name) {
+            withExistingParent(name, modLoc("block/" + name));
+        }
+
+        /**
+         * @see BlockStateProvider#simpleBlock(Block, net.minecraftforge.client.model.generators.ConfiguredModel...)
+         * @see BlockStateProvider#getVariantBuilder(Block)
+         * @see VariantBlockStateBuilder#partialState()
+         * @see VariantBlockStateBuilder#setModels(VariantBlockStateBuilder.PartialBlockstate, ConfiguredModel...)
+         * @see Blocks#FURNACE
+         *
+         */
     }
 
-    @Override
-    protected void registerModels() {
-        block("rich_iron_ore");
-        block("raw_iron_block");
-        withExistingParent("ore_enricher", modLoc("block/ore_enricher"));
-        ModelFile file = getExistingFile(mcLoc("item/generated"));
-
-        build(file, "raw_iron");
-        build(file, "raw_copper");
-        build(file, "raw_gold");
-    }
-
-    private void build(ModelFile file, String path) {
-        getBuilder(path).parent(file).texture("layer0", "item/" + path);
-    }
-
-    private void block(String name) {
-        withExistingParent(name, modLoc("block/" + name));
-    }
-
-    /**
-     * @see BlockStateProvider#simpleBlock(Block, net.minecraftforge.client.model.generators.ConfiguredModel...)
-     * @see BlockStateProvider#getVariantBuilder(Block)
-     * @see VariantBlockStateBuilder#partialState()
-     * @see VariantBlockStateBuilder#setModels(VariantBlockStateBuilder.PartialBlockstate, ConfiguredModel...)
-     * @see Blocks#FURNACE
-     *
-     */
     public static final class BlockState extends BlockStateProvider {
         public BlockState(DataGenerator generator, ExistingFileHelper existingFileHelper) {
             super(generator, RawOres.MODID, existingFileHelper);
@@ -52,7 +57,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
 
             simpleBlock(BlockRegistries.RAW_IRON_BLOCK.get());
 
-            simpleBlock(BlockRegistries.ORE_ENRICHER.get() ,models().cubeAll(   "ore_enricher", modLoc("block/enricher_sides")));
+            simpleBlock(BlockRegistries.ORE_ENRICHER.get(), models().cubeAll("ore_enricher", modLoc("block/enricher_sides")));
 //            axisBlock(new RotatedPillarBlock(AbstractBlock.Properties.copy(BlockRegistries.ORE_ENRICHER.get())),modLoc("block/enricher_sides"),modLoc("block/enricher_face"));
 
            /* models().withExistingParent("ore_enricher", mcLoc("block/block"))
@@ -83,7 +88,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
 
         @Override
         protected void registerModels() {
-           // cube("ore_enricher", modLoc("block/enricher_sides"), modLoc("block/enricher_sides"), modLoc("block/enricher_face"), modLoc("block/enricher_sides"), modLoc("block/enricher_sides"), modLoc("block/enricher_sides"));
+            // cube("ore_enricher", modLoc("block/enricher_sides"), modLoc("block/enricher_sides"), modLoc("block/enricher_face"), modLoc("block/enricher_sides"), modLoc("block/enricher_sides"), modLoc("block/enricher_sides"));
         }
     }
 }

@@ -98,9 +98,6 @@ public class OreEnriching implements IRecipe<IInventory> {
         }
 
         /**
-         * @param recipeId
-         * @param json
-         * @return
          * @see com.google.gson.JsonArray
          */
         @Override
