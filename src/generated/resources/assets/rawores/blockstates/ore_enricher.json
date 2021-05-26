@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "rawores:block/ore_enricher"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+modLoader="javafml" #mandatory
+loaderVersion="[36,)"
+license="All rights reserved"
+
+[[mods]] #mandatory
+modId="rawores" #mandatory
+version="${file.jarVersion}" #mandatory
+displayName="Raw Ores" #mandatory
+description='''
+Just Raw Ores from 1.17'''
