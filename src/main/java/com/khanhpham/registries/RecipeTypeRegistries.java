@@ -1,6 +1,6 @@
 package com.khanhpham.registries;
 
-import com.khanhpham.registries.recipe.OreEnriching;
+import com.khanhpham.common.recipe.OreEnriching;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;

@@ -1,35 +1,19 @@
 package com.khanhpham.client.datagen.recipe;
 
-import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.khanhpham.RawOres;
 import com.khanhpham.client.datagen.tags.ModTags;
 import com.khanhpham.registries.BlockRegistries;
 import com.khanhpham.registries.ItemRegistries;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.criterion.ImpossibleTrigger;
 import net.minecraft.advancements.criterion.InventoryChangeTrigger;
 import net.minecraft.block.Blocks;
 import net.minecraft.data.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Objects;
-import java.util.Set;
 import java.util.function.Consumer;
 
 /**

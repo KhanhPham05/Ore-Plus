@@ -1,7 +1,7 @@
 package com.khanhpham.registries;
 
 import com.khanhpham.RawOres;
-import com.khanhpham.registries.enchantments.RichMining;
+import com.khanhpham.common.enchantments.RichMining;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;

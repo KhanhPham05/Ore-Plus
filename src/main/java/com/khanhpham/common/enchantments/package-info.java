@@ -1,6 +1,6 @@
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-package com.khanhpham.registries.machine.oreenricher;
+package com.khanhpham.common.enchantments;
 
 
 import mcp.MethodsReturnNonnullByDefault;

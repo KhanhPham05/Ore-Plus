@@ -1,8 +1,6 @@
-69cc2264de7c13654688d09b337c6e7e20426101 assets/rawores/blockstates/ore_enricher.json
 0b6a436a4d825f8f99118c9fcf69b87a66a1a35a assets/rawores/blockstates/raw_iron_block.json
 e585fd3af4c9f3eeabc6aaf0f067f8dc31f6fb85 assets/rawores/blockstates/rich_iron_ore.json
-bc41dd00637a07afdda37fd6b82e2e56b66ef431 assets/rawores/lang/en_us.json
-095719562672df0044f4a2eeb93417b9f6228d3d assets/rawores/models/block/ore_enricher.json
+85cfa7fab9b50638cc4bd17e26f7f0fa60bdd0a4 assets/rawores/lang/en_us.json
 f596bcd9bc5431b10327db8811ac8044ce207f9b assets/rawores/models/block/raw_iron_block.json
 5a0db8bcc7323879595a6d37b16ba5dccb639a5c assets/rawores/models/block/rich_iron_ore.json
 b47e2871d9fc213acbd0568802ad1afa84c62e30 assets/rawores/models/item/enriching_element.json

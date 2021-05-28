@@ -1,6 +1,6 @@
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-package com.khanhpham.registries.enchantments;
+package com.khanhpham.common.recipe;
 
 
 import mcp.MethodsReturnNonnullByDefault;

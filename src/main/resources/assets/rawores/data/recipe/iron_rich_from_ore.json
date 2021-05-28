@@ -1,7 +1,0 @@
-{
-    "type": "rawores:ore_enriching",
-    "inputs": {
-      "item": "minecraft:iron_ore"
-    },
-    "output": "rawores:rich_iron_ore"
-}

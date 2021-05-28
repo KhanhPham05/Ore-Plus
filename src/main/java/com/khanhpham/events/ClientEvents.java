@@ -1,7 +1,7 @@
 package com.khanhpham.events;
 
 import com.khanhpham.RawOres;
-import com.khanhpham.registries.machine.oreenricher.EnricherScreen;
+import com.khanhpham.common.machine.oreenricher.EnricherScreen;
 import com.khanhpham.registries.ContainerRegistries;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraftforge.api.distmarker.Dist;

@@ -1,9 +1,10 @@
-package com.khanhpham.registries.recipe;
+package com.khanhpham.common.recipe;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.khanhpham.RawOres;
 import com.khanhpham.registries.BlockRegistries;
+import com.khanhpham.registries.ItemRegistries;
 import com.khanhpham.registries.RecipeTypeRegistries;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -25,13 +26,15 @@ public class OreEnriching implements IRecipe<IInventory> {
     public final Ingredient input;
     public final ItemStack output;
     private final ResourceLocation id;
-    public final int time;
 
-    public OreEnriching(Ingredient input, ItemStack output, ResourceLocation id, int time) {
+
+
+    private final Ingredient element = Ingredient.of(ItemRegistries.ENRICHING_ELEMENT.get());
+
+    public OreEnriching(Ingredient input, ItemStack output, ResourceLocation id) {
         this.input = input;
         this.output = output;
         this.id = id;
-        this.time = time;
     }
 
     @Override
@@ -78,11 +81,12 @@ public class OreEnriching implements IRecipe<IInventory> {
     public NonNullList<Ingredient> getIngredients() {
         NonNullList<Ingredient> ingredients = NonNullList.create();
         ingredients.add(input);
+        ingredients.add(getElement());
         return ingredients;
     }
 
-    public int getWorkingTime() {
-        return this.time;
+    public Ingredient getElement() {
+        return element;
     }
 
     public static final class Type implements IRecipeType<OreEnriching> {
@@ -99,9 +103,10 @@ public class OreEnriching implements IRecipe<IInventory> {
 
         /**
          * @see com.google.gson.JsonArray
+         * @see CookingRecipeSerializer
          */
         @Override
-        public OreEnriching fromJson(ResourceLocation recipeId, JsonObject json) {
+        public OreEnriching fromJson(ResourceLocation id, JsonObject json) {
             final JsonElement inputEl = JSONUtils.isArrayNode(json, "inputs")
                     ? JSONUtils.getAsJsonArray(json, "inputs")
                     : JSONUtils.getAsJsonObject(json, "inputs");
@@ -110,21 +115,19 @@ public class OreEnriching implements IRecipe<IInventory> {
             final ItemStack output;
             if (json.get("output").isJsonObject())
                 output = ShapedRecipe.itemFromJson(JSONUtils.getAsJsonObject(json, "output"));
-            else  {
-                output = new ItemStack(Registry.ITEM.getOptional(new ResourceLocation(JSONUtils.getAsString(json, "output"))).orElseThrow(() -> {
-                    return new IllegalStateException("Oops");
-                }));
+            else {
+                output = new ItemStack(Registry.ITEM.getOptional(new ResourceLocation(JSONUtils.getAsString(json, "output"))).orElseThrow(() -> new IllegalStateException("Oops")));
             }
-            return new OreEnriching(input, output, recipeId, 100);
+
+            return new OreEnriching(input, output, id);
         }
 
         @Override
-        public OreEnriching fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+        public OreEnriching fromNetwork(ResourceLocation id, PacketBuffer buffer) {
             final Ingredient input = Ingredient.fromNetwork(buffer);
             final ItemStack output = buffer.readItem();
 
-
-            return new OreEnriching(input, output, recipeId, 100);
+            return new OreEnriching(input, output, id);
         }
 
         @Override

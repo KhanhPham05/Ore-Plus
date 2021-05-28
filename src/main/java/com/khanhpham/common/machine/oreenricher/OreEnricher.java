@@ -1,11 +1,10 @@
-package com.khanhpham.registries.machine.oreenricher;
+package com.khanhpham.common.machine.oreenricher;
 
 import com.khanhpham.registries.TileEntityRegistries;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
