@@ -1,6 +1,7 @@
 package com.khanhpham.registries;
 
 import com.khanhpham.RawOres;
+import com.khanhpham.common.items.EnricherElement;
 import net.minecraft.item.Item;
 import net.minecraft.item.Rarity;
 import net.minecraftforge.fml.RegistryObject;
@@ -15,7 +16,7 @@ public class ItemRegistries {
     public static final RegistryObject<Item> COPPER_RAW_ORE = registryRawOre("raw_copper");
     public static final RegistryObject<Item> RAW_DIAMOND = registryRawOre("raw_diamond");
     public static final RegistryObject<Item> RICH_COAL = register("rich_coal");
-    public static final RegistryObject<Item> ENRICHING_ELEMENT = register("enriching_element");
+    public static final RegistryObject<EnricherElement> ENRICHING_ELEMENT = ITEMS.register("enriching_element", EnricherElement::new);
     /**
      * @see net.minecraft.item.Items
      */

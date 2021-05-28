@@ -1,7 +1,7 @@
 package com.khanhpham.registries;
 
 import com.khanhpham.RawOres;
-import com.khanhpham.registries.machine.oreenricher.EnricherTile;
+import com.khanhpham.common.machine.oreenricher.EnricherTile;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;

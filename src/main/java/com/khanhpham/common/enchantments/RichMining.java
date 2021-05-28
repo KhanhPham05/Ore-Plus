@@ -1,4 +1,4 @@
-package com.khanhpham.registries.enchantments;
+package com.khanhpham.common.enchantments;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;

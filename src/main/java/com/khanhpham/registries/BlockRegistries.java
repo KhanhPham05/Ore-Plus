@@ -1,7 +1,7 @@
 package com.khanhpham.registries;
 
 import com.khanhpham.RawOres;
-import com.khanhpham.registries.machine.oreenricher.OreEnricher;
+import com.khanhpham.common.machine.oreenricher.OreEnricher;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;

@@ -1,12 +1,15 @@
-package com.khanhpham.registries.machine.oreenricher;
+package com.khanhpham.common.machine.oreenricher;
 
 import com.khanhpham.RawOres;
+import com.khanhpham.api.TranslationUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 /**
@@ -44,10 +47,10 @@ public class EnricherScreen extends ContainerScreen<EnricherContainer> {
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int p_230451_2_, int p_230451_3_) {
-        font.draw(matrixStack, this.inventory.getDisplayName(), 8,
+    protected void renderLabels(MatrixStack matrix, int p_230451_2_, int p_230451_3_) {
+        font.draw(matrix, this.inventory.getDisplayName(), 8,
                 79, 4210752);
-        font.draw(matrixStack, EnricherTile.getTitle(), 10, 10, 4210732);
+        font.draw(matrix, EnricherTile.getTitle(), 10, 10, 4210732);
     }
 
 }

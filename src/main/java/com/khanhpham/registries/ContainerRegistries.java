@@ -1,7 +1,7 @@
 package com.khanhpham.registries;
 
 import com.khanhpham.RawOres;
-import com.khanhpham.registries.machine.oreenricher.EnricherContainer;
+import com.khanhpham.common.machine.oreenricher.EnricherContainer;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.fml.RegistryObject;

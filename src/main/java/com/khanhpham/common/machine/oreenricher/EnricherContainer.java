@@ -1,5 +1,6 @@
-package com.khanhpham.registries.machine.oreenricher;
+package com.khanhpham.common.machine.oreenricher;
 
+import com.khanhpham.api.ElementSlot;
 import com.khanhpham.registries.BlockRegistries;
 import com.khanhpham.registries.ContainerRegistries;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,7 +18,6 @@ import java.util.Objects;
 
 public class EnricherContainer extends Container {
 
-    //private final EnricherTile te;
     private final IWorldPosCallable canInteractWithCallable;
 
     /**
@@ -26,12 +26,11 @@ public class EnricherContainer extends Container {
     public EnricherContainer(final int p_i50105_2_, final PlayerInventory inv,final TileEntity te) {
         super(ContainerRegistries.ENRICHER.get() , p_i50105_2_);
         this.canInteractWithCallable = IWorldPosCallable.create(Objects.requireNonNull(te.getLevel()), te.getBlockPos());
-      //  this.te = (EnricherTile) te;
 
         //BLOCK CONTAINER
-        addSlot(new Slot((IInventory) te, 0, 55, 35));
-        addSlot(new Slot((IInventory) te, 1, 17, 35));
-        addSlot(new FurnaceResultSlot(inv.player, (IInventory) te,2, 116, 35));
+        addSlot(new Slot((IInventory) te, 0, 67, 35));
+        addSlot(new ElementSlot(te, 1, 24, 35));
+        addSlot(new FurnaceResultSlot(inv.player, (IInventory) te,2, 127, 35));
 
 
         for (int row = 0; row < 3; row++) {
