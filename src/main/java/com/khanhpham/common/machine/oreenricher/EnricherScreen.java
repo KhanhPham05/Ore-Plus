@@ -1,6 +1,7 @@
 package com.khanhpham.common.machine.oreenricher;
 
 import com.khanhpham.RawOres;
+import com.khanhpham.common.LangKeys;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -55,7 +56,7 @@ public class EnricherScreen extends ContainerScreen<EnricherContainer> {
     protected void renderLabels(MatrixStack matrix, int p_230451_2_, int p_230451_3_) {
         font.draw(matrix, this.inventory.getDisplayName(), 8,
                 79, 4210752);
-        font.draw(matrix, EnricherTile.getTitle(), 10, 10, 4210732);
+        font.draw(matrix, LangKeys.ENRICHER_SCREEN, 10, 10, 4210732);
     }
 
 }

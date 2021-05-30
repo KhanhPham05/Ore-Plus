@@ -15,10 +15,6 @@ public class ElementSlot extends Slot {
         super(iinventory, index, x, y);
     }
 
-    public ElementSlot(TileEntity te, int index, int x, int y) {
-        this((IInventory) te, index, x, y);
-    }
-
     @Override
     public boolean mayPlace(ItemStack stack) {
         return stack.getStack().sameItem(new ItemStack(ItemRegistries.ENRICHING_ELEMENT.get()));
