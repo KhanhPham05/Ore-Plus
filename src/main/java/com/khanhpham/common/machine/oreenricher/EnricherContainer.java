@@ -54,7 +54,7 @@ public class EnricherContainer extends Container {
     }
 
     public EnricherContainer(final int id, final PlayerInventory inv, final PacketBuffer buffer) {
-        this(id, inv, getTileEntity(inv, buffer), new IntArray(2));
+        this(id, inv, getTileEntity(inv, buffer), new IntArray(3));
     }
 
     private static EnricherTile getTileEntity(final PlayerInventory playerInv, final PacketBuffer data) {
@@ -96,10 +96,22 @@ public class EnricherContainer extends Container {
         return stack;
     }
 
+    // Dist marked similar as vanilla code
     @OnlyIn(Dist.CLIENT)
     public int getProcess() {
         int process = data.get(0);
         int maxTick = data.get(1);
-        return maxTick != 0 && process != 0 ? process / maxTick * 24 : 0;
+        return maxTick != 0 && process != 0 ? process * 24 / maxTick : 0;
+    }
+
+    /**
+     * @return true - if element is charged (1)
+     *         false - if element slot is empty (0)
+     */
+
+    // Dist marked similar as vanilla code
+    @OnlyIn(Dist.CLIENT)
+    public boolean isElementCharged() {
+        return data.get(2) == 1;
     }
 }

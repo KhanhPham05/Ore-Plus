@@ -30,6 +30,7 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
     private static ITextComponent title;
     private int maxTickPerItem = 160;
     private int processingCurrentTick = 0;
+    private int isElementCharged;
 
     private final IIntArray timeData = new IIntArray() {
         @Override
@@ -39,6 +40,8 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
                     return EnricherTile.this.processingCurrentTick;
                 case 1:
                     return EnricherTile.this.maxTickPerItem;
+                case 2:
+                    return EnricherTile.this.isElementCharged;
                 default:
                     return 0;
             }
@@ -51,12 +54,16 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
                     EnricherTile.this.processingCurrentTick = value;
                 case 1:
                     EnricherTile.this.maxTickPerItem = value;
+                case 2:
+                    if (value > 3|| value < 0) throw new IllegalStateException("isElementCharged can not different with 0 - 2");
+                    else
+                        EnricherTile.this.isElementCharged = value;
             }
         }
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
     };
 
@@ -96,6 +103,7 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
         if (!level.isClientSide) {
             ItemStack elementSlot = items.get(1);
             ItemStack inputSlot = items.get(0);
+            isElementCharged = elementSlot.isEmpty() ? 0 : 1;
             if (!elementSlot.isEmpty() && !inputSlot.isEmpty()) {
                 OreEnriching recipe = getRecipe();
                 if (canProcessFromRecipe(recipe)) {
@@ -193,16 +201,23 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
     public void load(BlockState state, CompoundNBT nbt) {
         super.load(state, nbt);
         ItemStackHelper.loadAllItems(nbt, this.items);
-      /* processingCurrentTime = nbt.getInt("ProcessingCurrentTime");
-        maxTickPerItem = nbt.getInt("MaxTimePerItemProcessing");*/
+        processingCurrentTick = nbt.getInt("ProcessingCurrentTime");
+        maxTickPerItem = nbt.getInt("MaxTimePerItemProcessing");
+        isElementCharged = nbt.getInt("IsContainsElement");
     }
 
+    /*
+     Fix save / load issue affected the machine processing
+     by move ItemStackHelper.saveAllItems(compound, this.items);
+     down to the end;
+    */
     @Override
     public CompoundNBT save(CompoundNBT compound) {
         super.save(compound);
+        compound.putInt("ProcessingCurrentTime", processingCurrentTick);
+        compound.putInt("MaxTimePerItemProcessing", maxTickPerItem);
+        compound.putInt("IsContainsElement", isElementCharged);
         ItemStackHelper.saveAllItems(compound, this.items);
-       /* compound.putInt("ProcessingCurrentTime", processingCurrentTime);
-        compound.putInt("MaxTimePerItemProcessing", maxTickPerItem);*/
         return compound;
     }
 }
