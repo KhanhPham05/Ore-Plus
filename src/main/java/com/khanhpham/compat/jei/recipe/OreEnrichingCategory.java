@@ -28,8 +28,8 @@ public class OreEnrichingCategory implements IRecipeCategory<OreEnriching> {
     public OreEnrichingCategory(IGuiHelper helper) {
         background = helper.createDrawable(TEXTURE_ID, 0, 0, 176, 83);
         icon = helper.createDrawableIngredient(new ItemStack(BlockRegistries.ORE_ENRICHER.get()));
-        IDrawableStatic arrowNonAnimated = helper.createDrawable(TEXTURE_ID, 183, 1, 22, 16);
-        arrow = helper.createAnimatedDrawable(arrowNonAnimated, 100, IDrawableAnimated.StartDirection.LEFT, false);
+        IDrawableStatic arrowNonAnimated = helper.createDrawable(TEXTURE_ID, 183, 10, 22, 16);
+        arrow = helper.createAnimatedDrawable(arrowNonAnimated, 80, IDrawableAnimated.StartDirection.LEFT, false);
     }
 
     @Override
@@ -63,13 +63,9 @@ public class OreEnrichingCategory implements IRecipeCategory<OreEnriching> {
         ingredients.setOutput(VanillaTypes.ITEM, recipe.getResultItem());
     }
 
-    /**
-     *
-     */
-
     @Override
     public void draw(OreEnriching recipe, MatrixStack matrixStack, double mouseX, double mouseY) {
-        arrow.draw(matrixStack, 93, 36);
+        arrow.draw(matrixStack, 93, 35);
     }
 
 

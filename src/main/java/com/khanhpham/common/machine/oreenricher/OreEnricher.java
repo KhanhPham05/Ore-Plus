@@ -55,7 +55,6 @@ public class OreEnricher extends Block {
             TileEntity te = world.getBlockEntity(pos);
             if (te instanceof EnricherTile) {
                 NetworkHooks.openGui((ServerPlayerEntity) player, (EnricherTile) te, pos);
-                world.playSound(player, pos, SoundEvents.CHEST_OPEN, SoundCategory.BLOCKS, 1, 1);
             }
         }
         return ActionResultType.SUCCESS;

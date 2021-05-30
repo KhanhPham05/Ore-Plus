@@ -7,16 +7,17 @@ import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * @see net.minecraft.client.gui.screen.inventory.FurnaceScreen
  */
+@OnlyIn(Dist.CLIENT)
 public class EnricherScreen extends ContainerScreen<EnricherContainer> {
-    private final EnricherContainer container;
 
     public EnricherScreen(EnricherContainer menu, PlayerInventory playerInventory, ITextComponent translate) {
         super(menu, playerInventory, translate);
-        this.container = menu;
     }
 
     public static final ResourceLocation GUI = new ResourceLocation(RawOres.MODID, "textures/gui/enricher_new.png");
@@ -35,11 +36,12 @@ public class EnricherScreen extends ContainerScreen<EnricherContainer> {
         minecraft.getTextureManager().bind(GUI);
         int i = leftPos;
         int j = topPos;
-        blit(matrix, i, j, 0, 0, 176, 177);
+        this.blit(matrix, i, j, 0, 0, 176, 177);
+        this.blit(matrix, i + 93, j + 35, 176, 13, this.menu.getProcess() + 1, 17);
 
-        int process = container.getProcess();
-        blit(matrix, i + 92, j + 34, 176, 13, process + 1, 17);
-
+        if (this.menu.isElementCharged()) {
+            this.blit(matrix, i + 45, j + 34, 205, 31, 16, 16);
+        }
     }
 
     @Override
