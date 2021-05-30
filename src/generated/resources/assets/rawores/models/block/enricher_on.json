@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "rawores:block/enricher_sides",
+    "front": "rawores:block/enricher_on",
+    "side": "rawores:block/enricher_sides"
+  }
+}
