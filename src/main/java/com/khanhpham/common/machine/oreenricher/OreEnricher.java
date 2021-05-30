@@ -5,6 +5,8 @@ import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -23,6 +25,8 @@ import javax.annotation.Nullable;
  * @see AbstractFurnaceBlock
  */
 public class OreEnricher extends Block {
+    public static final BooleanProperty WORKING = BlockStateProperties.LIT;
+
     public OreEnricher() {
         super(AbstractBlock.Properties.of(Material.METAL)
                 .sound(SoundType.METAL)

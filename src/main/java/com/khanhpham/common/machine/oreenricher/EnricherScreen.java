@@ -1,23 +1,22 @@
 package com.khanhpham.common.machine.oreenricher;
 
 import com.khanhpham.RawOres;
-import com.khanhpham.api.TranslationUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 
 /**
  * @see net.minecraft.client.gui.screen.inventory.FurnaceScreen
  */
 public class EnricherScreen extends ContainerScreen<EnricherContainer> {
-    public EnricherScreen(EnricherContainer p_i51105_1_, PlayerInventory p_i51105_2_, ITextComponent p_i51105_3_) {
-        super(p_i51105_1_, p_i51105_2_, p_i51105_3_);
+    private final EnricherContainer container;
+
+    public EnricherScreen(EnricherContainer menu, PlayerInventory playerInventory, ITextComponent translate) {
+        super(menu, playerInventory, translate);
+        this.container = menu;
     }
 
     public static final ResourceLocation GUI = new ResourceLocation(RawOres.MODID, "textures/gui/enricher_new.png");
@@ -37,6 +36,10 @@ public class EnricherScreen extends ContainerScreen<EnricherContainer> {
         int i = leftPos;
         int j = topPos;
         blit(matrix, i, j, 0, 0, 176, 177);
+
+        int process = container.getProcess();
+        blit(matrix, i + 92, j + 34, 176, 13, process + 1, 17);
+
     }
 
     @Override
