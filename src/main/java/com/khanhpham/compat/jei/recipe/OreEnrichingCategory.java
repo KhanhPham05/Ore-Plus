@@ -17,12 +17,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 
-
-/**
- * @see
- */
 public class OreEnrichingCategory implements IRecipeCategory<OreEnriching> {
-    public static final ResourceLocation ID = new ResourceLocation(RawOres.MODID, ".ore_enriching_category");
+    public static final ResourceLocation ID = new ResourceLocation(RawOres.MODID, "ore_enriching_category");
     private static final ResourceLocation TEXTURE_ID = new ResourceLocation(RawOres.MODID, "textures/gui/enricher_jei_new.png");
 
     private final IDrawable background;

@@ -1,6 +1,7 @@
 package com.khanhpham.common.machine.oreenricher;
 
 import com.khanhpham.api.ElementSlot;
+import com.khanhpham.api.IngredientSlot;
 import com.khanhpham.registries.BlockRegistries;
 import com.khanhpham.registries.ContainerRegistries;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,25 +13,32 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIntArray;
 import net.minecraft.util.IWorldPosCallable;
+import net.minecraft.util.IntArray;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Objects;
 
 public class EnricherContainer extends Container {
-
+    public final EnricherTile te;
     private final IWorldPosCallable canInteractWithCallable;
+    private final IIntArray data;
 
     /**
      * @see net.minecraft.inventory.container.AbstractFurnaceContainer
+     * @see net.minecraft.block.Blocks#FURNACE
      */
-    public EnricherContainer(final int p_i50105_2_, final PlayerInventory inv,final TileEntity te) {
-        super(ContainerRegistries.ENRICHER.get() , p_i50105_2_);
+    public EnricherContainer(final int p_i50105_2_, final PlayerInventory inv, final EnricherTile te, IIntArray data) {
+        super(ContainerRegistries.ENRICHER.get(), p_i50105_2_);
         this.canInteractWithCallable = IWorldPosCallable.create(Objects.requireNonNull(te.getLevel()), te.getBlockPos());
-
+        this.te = te;
+        this.data = data;
         //BLOCK CONTAINER
-        addSlot(new Slot((IInventory) te, 0, 67, 35));
-        addSlot(new ElementSlot(te, 1, 24, 35));
-        addSlot(new FurnaceResultSlot(inv.player, (IInventory) te,2, 127, 35));
+        addSlot(new IngredientSlot(te, 0, 67, 35));
+        addSlot(new ElementSlot((IInventory) te, 1, 24, 35));
+        addSlot(new FurnaceResultSlot(inv.player, te, 2, 127, 35));
 
 
         for (int row = 0; row < 3; row++) {
@@ -41,12 +49,12 @@ public class EnricherContainer extends Container {
 
         // Player Hotbar
         for (int col = 0; col < 9; col++) {
-            this.addSlot(new Slot(inv, col, 8 + col * 18, 142+11));
+            this.addSlot(new Slot(inv, col, 8 + col * 18, 142 + 11));
         }
     }
 
     public EnricherContainer(final int id, final PlayerInventory inv, final PacketBuffer buffer) {
-        this(id, inv, getTileEntity(inv, buffer));
+        this(id, inv, getTileEntity(inv, buffer), new IntArray(2));
     }
 
     private static EnricherTile getTileEntity(final PlayerInventory playerInv, final PacketBuffer data) {
@@ -61,7 +69,7 @@ public class EnricherContainer extends Container {
 
     @Override
     public boolean stillValid(PlayerEntity player) {
-        return stillValid(canInteractWithCallable,player, BlockRegistries.ORE_ENRICHER.get());
+        return stillValid(canInteractWithCallable, player, BlockRegistries.ORE_ENRICHER.get());
     }
 
     @Override
@@ -86,5 +94,12 @@ public class EnricherContainer extends Container {
             }
         }
         return stack;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public int getProcess() {
+        int process = data.get(0);
+        int maxTick = data.get(1);
+        return maxTick != 0 && process != 0 ? process / maxTick * 24 : 0;
     }
 }
