@@ -1,33 +1,36 @@
 package com.khanhpham.common.machine.oreenricher;
 
-import com.khanhpham.RawOres;
+import com.khanhpham.common.LangKeys;
 import com.khanhpham.common.recipe.OreEnriching;
 import com.khanhpham.registries.RecipeTypeRegistries;
 import com.khanhpham.registries.TileEntityRegistries;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.LockableLootTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
 
-public class EnricherTile extends LockableLootTileEntity implements ITickableTileEntity {
+public class EnricherTile extends TileEntity implements ITickableTileEntity, INamedContainerProvider {
 
     public EnricherTile() {
         super(TileEntityRegistries.ENRICHER_TILE.get());
     }
 
     protected static final int slots = 3;
-    private NonNullList<ItemStack> items = NonNullList.withSize(slots, ItemStack.EMPTY);
-    private static ITextComponent title;
+    private final NonNullList<ItemStack> items = NonNullList.withSize(slots, ItemStack.EMPTY);
+    private final ITextComponent title = getDisplayName();
     private int maxTickPerItem = 160;
     private int processingCurrentTick = 0;
     private int isElementCharged;
@@ -55,7 +58,8 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
                 case 1:
                     EnricherTile.this.maxTickPerItem = value;
                 case 2:
-                    if (value > 3|| value < 0) throw new IllegalStateException("isElementCharged can not different with 0 - 2");
+                    if (value > 3 || value < 0)
+                        throw new IllegalStateException("isElementCharged can not different with 0 - 2");
                     else
                         EnricherTile.this.isElementCharged = value;
             }
@@ -66,36 +70,6 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
             return 3;
         }
     };
-
-    @Override
-    protected NonNullList<ItemStack> getItems() {
-        return items;
-    }
-
-    @Override
-    protected void setItems(NonNullList<ItemStack> itemsIn) {
-        items = itemsIn;
-    }
-
-    @Override
-    protected ITextComponent getDefaultName() {
-        title = new TranslationTextComponent("container." + RawOres.MODID + ".enricher");
-        return title;
-    }
-
-    public static ITextComponent getTitle() {
-        return title;
-    }
-
-    @Override
-    protected Container createMenu(int id, PlayerInventory inv) {
-        return new EnricherContainer(id, inv, this, timeData);
-    }
-
-    @Override
-    public int getContainerSize() {
-        return slots;
-    }
 
     @Override
     public void tick() {
@@ -114,14 +88,9 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
                     }
                 } else {
                     processingCurrentTick = 0;
+                    setChanged();
                 }
             }
-
-           /* OreEnriching recipe = getRecipe();
-            if (recipe != null)
-                if (canProcess(recipe)) {
-                level.setBlock(worldPosition, level.getBlockState(worldPosition).setValue(OreEnricher.WORKING, canProcess(recipe)), 3);
-            }*/
         }
         setChanged();
     }
@@ -133,7 +102,7 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
      * @see net.minecraft.tileentity.AbstractFurnaceTileEntity
      */
 
-    private boolean canProcess(@Nullable OreEnriching recipe) {
+    /*private boolean canProcess(@Nullable OreEnriching recipe) {
         ItemStack inputSlot = items.get(0);
         ItemStack elementSlot = items.get(1);
         ItemStack outputSlot = items.get(2);
@@ -144,12 +113,9 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
             return false;
         } else if (!elementSlot.isEmpty()) {
             ItemStack output = recipe.getResultItem();
-            if (!inputSlot.isEmpty() && (outputSlot.isEmpty() || outputSlot.sameItem(output))) {
-                return true;
-            } else return false;
+            return !inputSlot.isEmpty() && (outputSlot.isEmpty() || outputSlot.sameItem(output));
         } else return false;
-    }
-
+    }*/
     private void processing(@Nullable OreEnriching recipe) {
         if (recipe != null && canProcessFromRecipe(recipe)) {
             ItemStack inputSlot = items.get(0);
@@ -164,6 +130,7 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
 
             inputSlot.shrink(1);
             items.get(1).shrink(1);
+            setChanged();
         }
     }
 
@@ -178,7 +145,7 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
                     return true;
                 } else if (!resultSlot.sameItem(stack)) {
                     return false;
-                } else if (resultSlot.getCount() + stack.getCount() <= getMaxStackSize() && resultSlot.getCount() + stack.getCount() <= resultSlot.getMaxStackSize()) {
+                } else if (resultSlot.getCount() + stack.getCount() <= 64 && resultSlot.getCount() + stack.getCount() <= resultSlot.getMaxStackSize()) {
                     return true;
                 } else {
                     return resultSlot.getCount() + stack.getCount() <= stack.getMaxStackSize();
@@ -194,7 +161,7 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
             return null;
         }
         assert level != null;
-        return level.getRecipeManager().getRecipeFor(RecipeTypeRegistries.ORE_ENRICHING, this, level).orElse(null);
+        return level.getRecipeManager().getRecipeFor(RecipeTypeRegistries.ORE_ENRICHING, (IInventory) this, level).orElse(null);
     }
 
     @Override
@@ -219,5 +186,16 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
         compound.putInt("IsContainsElement", isElementCharged);
         ItemStackHelper.saveAllItems(compound, this.items);
         return compound;
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return LangKeys.ENRICHER_SCREEN;
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
+        return new EnricherContainer(p_createMenu_1_, p_createMenu_2_, timeData);
     }
 }

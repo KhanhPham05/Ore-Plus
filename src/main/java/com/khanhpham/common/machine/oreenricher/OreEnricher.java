@@ -5,6 +5,7 @@ import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
@@ -54,15 +55,9 @@ public class OreEnricher extends Block {
         if (!world.isClientSide()) {
             TileEntity te = world.getBlockEntity(pos);
             if (te instanceof EnricherTile) {
-                NetworkHooks.openGui((ServerPlayerEntity) player, (EnricherTile) te, pos);
+                NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) te, pos);
             }
         }
         return ActionResultType.SUCCESS;
     }
-
-    /*@Nullable
-    @Override
-    public BlockState getStateForPlacement(BlockItemUseContext p_196258_1_) {
-        return this.defaultBlockState().setValue(HorizontalBlock.FACING, p_196258_1_.getHorizontalDirection().getOpposite());
-    }*/
 }
