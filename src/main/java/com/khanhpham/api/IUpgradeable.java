@@ -1,5 +1,7 @@
 package com.khanhpham.api;
 
-public interface IUpgradeable {
+import net.minecraft.item.ItemStack;
 
+public interface IUpgradeable {
+    ItemStack getStack();
 }

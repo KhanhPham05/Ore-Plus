@@ -1,41 +1,40 @@
 package com.khanhpham.common.machine.oreenricher;
 
+import com.khanhpham.api.ISpeedUpgrade;
+import com.khanhpham.api.IUpgradeable;
 import com.khanhpham.common.LangKeys;
+import com.khanhpham.common.items.AbstractSpeedUpgrade;
 import com.khanhpham.common.recipe.OreEnriching;
 import com.khanhpham.registries.RecipeTypeRegistries;
 import com.khanhpham.registries.TileEntityRegistries;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.LockableLootTileEntity;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
 
-public class EnricherTile extends TileEntity implements ITickableTileEntity, INamedContainerProvider {
+/**
+ * @see net.minecraft.tileentity.LockableLootTileEntity
+ */
+public class EnricherTile extends LockableLootTileEntity implements ITickableTileEntity, INamedContainerProvider {
 
-    public EnricherTile() {
-        super(TileEntityRegistries.ENRICHER_TILE.get());
-    }
-
-    protected static final int slots = 3;
-    private final NonNullList<ItemStack> items = NonNullList.withSize(slots, ItemStack.EMPTY);
-    private final ITextComponent title = getDisplayName();
+    protected static final int slots = 6;
+    private NonNullList<ItemStack> items = NonNullList.withSize(slots, ItemStack.EMPTY);
     private int maxTickPerItem = 160;
     private int processingCurrentTick = 0;
     private int isElementCharged;
-
-    private final IIntArray timeData = new IIntArray() {
+    private int isSpeedUpgraded;
+    private final IIntArray blockData = new IIntArray() {
         @Override
         public int get(int index) {
             switch (index) {
@@ -45,6 +44,8 @@ public class EnricherTile extends TileEntity implements ITickableTileEntity, INa
                     return EnricherTile.this.maxTickPerItem;
                 case 2:
                     return EnricherTile.this.isElementCharged;
+                case 3:
+                    return EnricherTile.this.isSpeedUpgraded;
                 default:
                     return 0;
             }
@@ -59,17 +60,26 @@ public class EnricherTile extends TileEntity implements ITickableTileEntity, INa
                     EnricherTile.this.maxTickPerItem = value;
                 case 2:
                     if (value > 3 || value < 0)
-                        throw new IllegalStateException("isElementCharged can not different with 0 - 2");
+                        throw new IllegalStateException("isElementCharged (2) can not different with 0 - 1");
                     else
                         EnricherTile.this.isElementCharged = value;
+                case 3:
+                    if (value > 3 || value < 0)
+                    throw new IllegalStateException("isSpeedUpgraded (3) can not different with 0 - 1");
+                else
+                    EnricherTile.this.isSpeedUpgraded = value;
             }
         }
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
     };
+
+    public EnricherTile() {
+        super(TileEntityRegistries.ENRICHER_TILE.get());
+    }
 
     @Override
     public void tick() {
@@ -78,10 +88,15 @@ public class EnricherTile extends TileEntity implements ITickableTileEntity, INa
             ItemStack elementSlot = items.get(1);
             ItemStack inputSlot = items.get(0);
             isElementCharged = elementSlot.isEmpty() ? 0 : 1;
+            isSpeedUpgraded = items.get(3).isEmpty() ? 0 : 1;
+
             if (!elementSlot.isEmpty() && !inputSlot.isEmpty()) {
                 OreEnriching recipe = getRecipe();
                 if (canProcessFromRecipe(recipe)) {
-                    ++processingCurrentTick;
+                    if (isSpeedUpgraded(items)) {
+                        processingCurrentTick = applyUpgrade(items, processingCurrentTick);
+                    } else
+                        ++processingCurrentTick;
                     if (processingCurrentTick == maxTickPerItem) {
                         processingCurrentTick = 0;
                         processing(recipe);
@@ -90,32 +105,27 @@ public class EnricherTile extends TileEntity implements ITickableTileEntity, INa
                     processingCurrentTick = 0;
                     setChanged();
                 }
+            } else {
+                processingCurrentTick = 0;
             }
         }
         setChanged();
     }
 
-    /**
-     * @see net.minecraft.inventory.container.AbstractFurnaceContainer
-     * @see net.minecraft.client.gui.screen.inventory.AbstractFurnaceScreen
-     * @see net.minecraftforge.common.ForgeHooks
-     * @see net.minecraft.tileentity.AbstractFurnaceTileEntity
-     */
 
-    /*private boolean canProcess(@Nullable OreEnriching recipe) {
-        ItemStack inputSlot = items.get(0);
-        ItemStack elementSlot = items.get(1);
-        ItemStack outputSlot = items.get(2);
+    private boolean isSpeedUpgraded(NonNullList<ItemStack> items) {
+        return items.get(3).getItem() instanceof AbstractSpeedUpgrade;
+    }
 
-        if (inputSlot.isEmpty() || elementSlot.isEmpty()) {
-            return false;
-        } else if (recipe == null) {
-            return false;
-        } else if (!elementSlot.isEmpty()) {
-            ItemStack output = recipe.getResultItem();
-            return !inputSlot.isEmpty() && (outputSlot.isEmpty() || outputSlot.sameItem(output));
-        } else return false;
-    }*/
+    private int applyUpgrade(NonNullList<ItemStack> items, int currentTick) {
+        ItemStack upgradeSlot = items.get(3);
+        if (upgradeSlot.getItem() instanceof ISpeedUpgrade) {
+            ISpeedUpgrade upgrade = (ISpeedUpgrade) upgradeSlot.getItem();
+            return currentTick + upgrade.speedEffect();
+        }
+        return currentTick + 1;
+    }
+
     private void processing(@Nullable OreEnriching recipe) {
         if (recipe != null && canProcessFromRecipe(recipe)) {
             ItemStack inputSlot = items.get(0);
@@ -171,6 +181,7 @@ public class EnricherTile extends TileEntity implements ITickableTileEntity, INa
         processingCurrentTick = nbt.getInt("ProcessingCurrentTime");
         maxTickPerItem = nbt.getInt("MaxTimePerItemProcessing");
         isElementCharged = nbt.getInt("IsContainsElement");
+        isSpeedUpgraded = nbt.getInt("IsSpeedUpgraded");
     }
 
     /*
@@ -184,18 +195,33 @@ public class EnricherTile extends TileEntity implements ITickableTileEntity, INa
         compound.putInt("ProcessingCurrentTime", processingCurrentTick);
         compound.putInt("MaxTimePerItemProcessing", maxTickPerItem);
         compound.putInt("IsContainsElement", isElementCharged);
-        ItemStackHelper.saveAllItems(compound, this.items);
+        compound.putInt("IsSpeedUpgraded", isSpeedUpgraded);
+        ItemStackHelper.saveAllItems(compound, items);
         return compound;
     }
 
     @Override
-    public ITextComponent getDisplayName() {
+    protected ITextComponent getDefaultName() {
         return LangKeys.ENRICHER_SCREEN;
     }
 
-    @Nullable
     @Override
-    public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
-        return new EnricherContainer(p_createMenu_1_, p_createMenu_2_, timeData);
+    protected NonNullList<ItemStack> getItems() {
+        return items;
+    }
+
+    @Override
+    protected void setItems(NonNullList<ItemStack> p_199721_1_) {
+        this.items = p_199721_1_;
+    }
+
+    @Override
+    protected Container createMenu(int p_213906_1_, PlayerInventory p_213906_2_) {
+        return new EnricherContainer(p_213906_1_, p_213906_2_, this, blockData);
+    }
+
+    @Override
+    public int getContainerSize() {
+        return slots;
     }
 }
