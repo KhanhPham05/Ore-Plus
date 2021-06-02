@@ -23,9 +23,8 @@ public class ModelProvider {
 
             ModelFile file = getExistingFile(mcLoc("item/generated"));
             build(file, "raw_iron");
-            build(file, "raw_copper");
-            build(file, "raw_gold");
             build(file, "enriching_element");
+            build(file, "speed_upgrade_mk_1");
         }
 
         private void build(ModelFile file, String path) {

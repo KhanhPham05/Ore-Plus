@@ -17,11 +17,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class EnricherScreen extends ContainerScreen<EnricherContainer> {
 
+    public static final ResourceLocation GUI = new ResourceLocation(RawOres.MODID, "textures/gui/enricher_new.png");
+
     public EnricherScreen(EnricherContainer menu, PlayerInventory playerInventory, ITextComponent translate) {
         super(menu, playerInventory, translate);
     }
-
-    public static final ResourceLocation GUI = new ResourceLocation(RawOres.MODID, "textures/gui/enricher_new.png");
 
     /**
      * @see net.minecraft.inventory.container.AbstractFurnaceContainer
@@ -37,11 +37,22 @@ public class EnricherScreen extends ContainerScreen<EnricherContainer> {
         minecraft.getTextureManager().bind(GUI);
         int i = leftPos;
         int j = topPos;
-        this.blit(matrix, i, j, 0, 0, 176, 177);
-        this.blit(matrix, i + 93, j + 35, 176, 13, this.menu.getProcess() + 1, 17);
+        int xOffset = 30;
 
+        /* Main Screen */
+        this.blit(matrix, i - xOffset, j, 0, 0, 206, 177);
+
+        //Processing arrow animation
+        this.blit(matrix, i + 122 - xOffset, j + 34, 209, 124, this.menu.getProcess() + 1, 17);
+
+        //element plus icon
         if (this.menu.isElementCharged()) {
-            this.blit(matrix, i + 45, j + 34, 205, 31, 16, 16);
+            this.blit(matrix, i + 76 - xOffset, j + 36, 239, 142, 16, 15);
+        }
+
+        //Speed Upgraded Pipe
+        if (this.menu.isSpeedUpgraded()) {
+            this.blit(matrix, i + 13 - xOffset, j + 31, 211, 94, 17, 10);
         }
     }
 
@@ -56,7 +67,14 @@ public class EnricherScreen extends ContainerScreen<EnricherContainer> {
     protected void renderLabels(MatrixStack matrix, int p_230451_2_, int p_230451_3_) {
         font.draw(matrix, this.inventory.getDisplayName(), 8,
                 79, 4210752);
+
         font.draw(matrix, LangKeys.ENRICHER_SCREEN, 10, 10, 4210732);
+
+
     }
 
+    @Override
+    public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_) {
+        return super.mouseClicked(p_231044_1_, p_231044_3_, p_231044_5_);
+    }
 }

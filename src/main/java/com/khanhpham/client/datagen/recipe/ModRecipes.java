@@ -28,18 +28,15 @@ public class ModRecipes extends RecipeProvider {
     @Override
     protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer) {
         blasting(consumer, ItemRegistries.IRON_RAW_ORE.get(), Items.IRON_INGOT, "has_iron_raw", "iron_ore_from_raw");
-        ShapedRecipeBuilder.shaped(BlockRegistries.ORE_ENRICHER.get())
-                .pattern("IRI")
-                .pattern("RFR")
-                .pattern("IRI")
-                .define('I', Tags.Items.INGOTS_IRON)
-                .define('R', Tags.Items.DUSTS_REDSTONE)
-                .define('F', Blocks.FURNACE)
-                .unlockedBy("has_furnace", InventoryChangeTrigger.Instance.hasItems(Blocks.FURNACE))
-                .save(consumer, rl("craft_enricher"));
+        craftingShaped(consumer);
         OreEnrichingRecipeBuilder.build(Ingredient.of(Blocks.IRON_ORE), BlockRegistries.RICH_IRON_ORE.get())
                 .unlockedBy("has_iron_ore", has(Blocks.IRON_ORE))
                 .save(consumer, rl("enrich_ore_iron"));
+    }
+
+    private void craftingShaped(Consumer<IFinishedRecipe> consumer) {
+        ShapedRecipeBuilder.shaped(BlockRegistries.ORE_ENRICHER.get()).pattern("IRI").pattern("RFR").pattern("IRI").define('I', Tags.Items.INGOTS_IRON).define('R', Tags.Items.DUSTS_REDSTONE).define('F', Blocks.FURNACE).unlockedBy("has_furnace", InventoryChangeTrigger.Instance.hasItems(Blocks.FURNACE)).save(consumer, rl("craft_enricher"));
+        ShapedRecipeBuilder.shaped(ItemRegistries.SPEED_MK_I.get()).pattern(" R ").pattern("RSR").pattern(" R ").define('R', Tags.Items.DUSTS_REDSTONE).define('S', Items.SUGAR);
     }
 
     private void blasting(Consumer<IFinishedRecipe> consumer, Item input, Item result, String criteria, String saveName) {
