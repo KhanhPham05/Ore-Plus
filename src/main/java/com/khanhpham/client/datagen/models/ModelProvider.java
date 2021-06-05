@@ -1,14 +1,43 @@
 package com.khanhpham.client.datagen.models;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.khanhpham.RawOres;
 import com.khanhpham.registries.BlockRegistries;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.*;
+import net.minecraft.data.BlockModelProvider;
+import net.minecraft.item.Item;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraftforge.client.model.generators.*;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+/**
+ * @see net.minecraft.data.BlockModelProvider
+ */
 public class ModelProvider {
 
     public static final class Item extends net.minecraftforge.client.model.generators.ItemModelProvider {
@@ -48,28 +77,132 @@ public class ModelProvider {
     public static final class BlockState extends BlockStateProvider {
         public BlockState(DataGenerator generator, ExistingFileHelper existingFileHelper) {
             super(generator, RawOres.MODID, existingFileHelper);
+            this.generator = generator;
+        }
+
+        private final DataGenerator generator;
+        private static final Logger LOGGER = LogManager.getLogger();
+        private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public void run(DirectoryCache cache) {
+            Path path = this.generator.getOutputFolder();
+            Map<Block, IFinishedBlockState> map = Maps.newHashMap();
+            Consumer<IFinishedBlockState> consumer = (p_240085_1_) -> {
+                Block block = p_240085_1_.getBlock();
+                IFinishedBlockState ifinishedblockstate = map.put(block, p_240085_1_);
+                if (ifinishedblockstate != null) {
+                    throw new IllegalStateException("Duplicate blockstate definition for " + block);
+                }
+            };
+            Map<ResourceLocation, Supplier<JsonElement>> map1 = Maps.newHashMap();
+            Set<net.minecraft.item.Item> set = Sets.newHashSet();
+            BiConsumer<ResourceLocation, Supplier<JsonElement>> biconsumer = (p_240086_1_, p_240086_2_) -> {
+                Supplier<JsonElement> supplier = map1.put(p_240086_1_, p_240086_2_);
+                if (supplier != null) {
+                    throw new IllegalStateException("Duplicate model definition for " + p_240086_1_);
+                }
+            };
+            Consumer<net.minecraft.item.Item> consumer1 = set::add;
+            (new net.minecraft.data.BlockModelProvider(consumer, biconsumer, consumer1)).run();
+            (new BlockModels(consumer, biconsumer, consumer1)).run();
+            List<Block> list = Registry.BLOCK.stream()
+                    .filter((p_240084_1_) -> !map.containsKey(p_240084_1_)).collect(Collectors.toList());
+            if (!list.isEmpty()) {
+                throw new IllegalStateException("Missing blockstate definitions for: " + list);
+            } else {
+                Registry.BLOCK.forEach((p_240087_2_) -> {
+                    net.minecraft.item.Item item = net.minecraft.item.Item.BY_BLOCK.get(p_240087_2_);
+                    if (item != null) {
+                        if (set.contains(item)) {
+                            return;
+                        }
+
+                        ResourceLocation resourcelocation = ModelsResourceUtil.getModelLocation(item);
+                        if (!map1.containsKey(resourcelocation)) {
+                            map1.put(resourcelocation, new BlockModelWriter(ModelsResourceUtil.getModelLocation(p_240087_2_)));
+                        }
+                    }
+
+                });
+                saveCollection(cache, path, map, this::createBlockStatePath);
+                saveCollection(cache, path, map1, this::createModelPath);
+            }
+        }
+
+        private <T> void saveCollection(DirectoryCache p_240081_1_, Path p_240081_2_, Map<T, ? extends Supplier<JsonElement>> p_240081_3_, BiFunction<Path, T, Path> p_240081_4_) {
+            p_240081_3_.forEach((p_240088_3_, p_240088_4_) -> {
+                Path path = p_240081_4_.apply(p_240081_2_, p_240088_3_);
+
+                try {
+                    IDataProvider.save(GSON, p_240081_1_, p_240088_4_.get(), path);
+                } catch (Exception exception) {
+                    LOGGER.error("Couldn't save {}", path, exception);
+                }
+
+            });
+        }
+
+        private Path createBlockStatePath(Path p_240082_0_, Block p_240082_1_) {
+            ResourceLocation resourcelocation = Registry.BLOCK.getKey(p_240082_1_);
+            return p_240082_0_.resolve("assets/" + resourcelocation.getNamespace() + "/blockstates/" + resourcelocation.getPath() + ".json");
+        }
+
+        private Path createModelPath(Path p_240083_0_, ResourceLocation p_240083_1_) {
+            return p_240083_0_.resolve("assets/" + p_240083_1_.getNamespace() + "/models/" + p_240083_1_.getPath() + ".json");
         }
 
         @Override
-        protected void registerStatesAndModels() {
-            simpleBlock(BlockRegistries.RICH_IRON_ORE.get());
-
-            simpleBlock(BlockRegistries.RAW_IRON_BLOCK.get());
-        }
+        protected void registerStatesAndModels() {}
     }
 
-    /**
-     * @see BlockModel
-     * @see net.minecraft.block.Blocks#FURNACE
-     */
-    public static final class BlockModel extends BlockModelProvider {
-        public BlockModel(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-            super(generator, RawOres.MODID, existingFileHelper);
+    private static final class BlockModels extends BlockModelProvider {
+        public BlockModels(Consumer<IFinishedBlockState> p_i232514_1_, BiConsumer<ResourceLocation, Supplier<JsonElement>> p_i232514_2_, Consumer<net.minecraft.item.Item> p_i232514_3_) {
+            super(p_i232514_1_, p_i232514_2_, p_i232514_3_);
+
+            blockStateOutput = p_i232514_1_;
+            modelOutput = p_i232514_2_;
         }
 
+        private final Consumer<IFinishedBlockState> blockStateOutput;
+        private final BiConsumer<ResourceLocation, Supplier<JsonElement>> modelOutput;
+
+        private void createFurnace(Block p_239977_1_, TexturedModel.ISupplier p_239977_2_) {
+            ResourceLocation resourcelocation = p_239977_2_.create(p_239977_1_, this.modelOutput);
+            ResourceLocation resourcelocation1 = ModelTextures.getBlockTexture(p_239977_1_, "_front_on");
+            ResourceLocation resourcelocation2 = p_239977_2_.get(p_239977_1_).updateTextures((p_239963_1_) -> {
+                p_239963_1_.put(StockTextureAliases.FRONT, resourcelocation1);
+            }).createWithSuffix(p_239977_1_, "_on", this.modelOutput);
+            this.blockStateOutput.accept(FinishedVariantBlockState.multiVariant(p_239977_1_).with(createBooleanModelDispatch(BlockStateProperties.LIT, resourcelocation2, resourcelocation)).with(createHorizontalFacingDispatch()));
+        }
+
+        private static BlockStateVariantBuilder createBooleanModelDispatch(BooleanProperty p_239894_0_, ResourceLocation p_239894_1_, ResourceLocation p_239894_2_) {
+            return BlockStateVariantBuilder.property(p_239894_0_).select(true, BlockModelDefinition.variant().with(BlockModelFields.MODEL, p_239894_1_)).select(false, BlockModelDefinition.variant().with(BlockModelFields.MODEL, p_239894_2_));
+        }
+        private static BlockStateVariantBuilder createHorizontalFacingDispatch() {
+            return BlockStateVariantBuilder.property(BlockStateProperties.HORIZONTAL_FACING).select(Direction.EAST, BlockModelDefinition.variant().with(BlockModelFields.Y_ROT, BlockModelFields.Rotation.R90)).select(Direction.SOUTH, BlockModelDefinition.variant().with(BlockModelFields.Y_ROT, BlockModelFields.Rotation.R180)).select(Direction.WEST, BlockModelDefinition.variant().with(BlockModelFields.Y_ROT, BlockModelFields.Rotation.R270)).select(Direction.NORTH, BlockModelDefinition.variant());
+        }
+
+        private void createTrivialCube(Block p_239975_1_) {
+            this.createTrivialBlock(p_239975_1_, TexturedModel.CUBE);
+        }
+
+        private void createTrivialBlock(Block p_239956_1_, TexturedModel.ISupplier p_239956_2_) {
+            this.blockStateOutput.accept(createSimpleBlock(p_239956_1_, p_239956_2_.create(p_239956_1_, this.modelOutput)));
+        }
+
+        private static FinishedVariantBlockState createSimpleBlock(Block p_239978_0_, ResourceLocation p_239978_1_) {
+            return FinishedVariantBlockState.multiVariant(p_239978_0_, BlockModelDefinition.variant().with(BlockModelFields.MODEL, p_239978_1_));
+        }
+
+
         @Override
-        protected void registerModels() {
-            // cube("ore_enricher", modLoc("block/enricher_sides"), modLoc("block/enricher_sides"), modLoc("block/enricher_face"), modLoc("block/enricher_sides"), modLoc("block/enricher_sides"), modLoc("block/enricher_sides"));
+        public void run() {
+            createFurnace(BlockRegistries.ORE_ENRICHER.get(), TexturedModel.ORIENTABLE_ONLY_TOP);
+            createFurnace(BlockRegistries.ORE_PROCESSOR.get(), TexturedModel.ORIENTABLE_ONLY_TOP);
+            createTrivialCube(BlockRegistries.RAW_IRON_BLOCK.get());
+            createTrivialCube(BlockRegistries.RICH_IRON_ORE.get());
         }
     }
 }

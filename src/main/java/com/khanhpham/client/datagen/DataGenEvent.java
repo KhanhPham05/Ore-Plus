@@ -26,7 +26,6 @@ public class DataGenEvent {
 
         data.addProvider(new ModRecipes(data));
         data.addProvider(new ModelProvider.BlockState(data, helper));
-        data.addProvider(new ModelProvider.BlockModel(data, helper));
         data.addProvider(new ModelProvider.Item(data, helper));
         data.addProvider(new ModLootTable(data));
         data.addProvider(new LangProvider(data));

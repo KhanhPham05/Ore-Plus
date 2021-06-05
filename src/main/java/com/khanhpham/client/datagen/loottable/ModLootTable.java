@@ -14,9 +14,13 @@ import net.minecraft.block.Blocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.LootTableProvider;
 import net.minecraft.data.loot.BlockLootTables;
+import net.minecraft.data.loot.ChestLootTables;
+import net.minecraft.item.Items;
 import net.minecraft.loot.*;
 import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.loot.conditions.MatchTool;
+import net.minecraft.loot.functions.EnchantRandomly;
+import net.minecraft.loot.functions.SetCount;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.RegistryObject;
@@ -57,16 +61,16 @@ public class ModLootTable extends LootTableProvider {
         /**
          * @see BlockLootTables line 627 for STONE to cobblestone
          * @see BlockLootTables#createSingleItemTableWithSilkTouch(Block, IItemProvider)
-         * @see ItemRegistries
-         */
+         * @see net.minecraft.item.Items#ROTTEN_FLESH
+         * */
         @Override
         protected void addTables() {
             dropSelf(BlockRegistries.RAW_IRON_BLOCK.get());
-            dropSelf(BlockRegistries.RAW_GOLD_BLOCK.get());
             add(BlockRegistries.RICH_IRON_ORE.get(), (ore) -> createRichMiningWithSilkTouch(ore, Blocks.IRON_ORE.asItem()));
-            add(BlockRegistries.RICH_GOLD_ORE.get(), (ore) -> createRichMiningWithSilkTouch(ore, Blocks.GOLD_ORE.asItem()));
-            add(BlockRegistries.RICH_COAL_ORE.get(), ore -> createRichMiningWithSilkTouch(ore, Blocks.COAL_ORE.asItem()));
             dropSelf(BlockRegistries.ORE_ENRICHER.get());
+            dropSelf(BlockRegistries.ORE_PROCESSOR.get());
+            add(BlockRegistries.ORE_ENRICHER.get(), BlockLootTables::createNameableBlockEntityTable);
+            add(BlockRegistries.ORE_PROCESSOR.get(), BlockLootTables::createNameableBlockEntityTable);
         }
 
 
@@ -81,10 +85,6 @@ public class ModLootTable extends LootTableProvider {
         private static LootTable.Builder selfDropDispatchTable(Block block, ILootCondition.IBuilder builder, LootEntry.Builder<?> loot) {
             return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantRange.exactly(1)).add(ItemLootEntry.lootTableItem(block).when(builder).otherwise(loot)));
         }
-
-        /*
-        LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantRange.exactly(1)).add(ItemLootEntry.lootTableItem(block).when(HAS_RICH_MINING).otherwise(applyExplosionDecay(block, ItemLootEntry.lootTableItem(ItemLootEntry.lootTableItem(drop)).apply(ApplyBonus.addOreBonusCount(EnchantRegistries.RICH_MINING.get()))))));
-         */
 
 
         @Override

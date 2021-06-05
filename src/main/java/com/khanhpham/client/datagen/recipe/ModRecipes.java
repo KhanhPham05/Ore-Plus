@@ -32,6 +32,9 @@ public class ModRecipes extends RecipeProvider {
         OreEnrichingRecipeBuilder.build(Ingredient.of(Blocks.IRON_ORE), BlockRegistries.RICH_IRON_ORE.get())
                 .unlockedBy("has_iron_ore", has(Blocks.IRON_ORE))
                 .save(consumer, rl("enrich_ore_iron"));
+        OreProcessingBuilder.build(Ingredient.of(BlockRegistries.RICH_IRON_ORE.get()), Items.IRON_INGOT,2)
+                .unlockedBy("has_rich_ore", has(BlockRegistries.RICH_IRON_ORE.get()))
+                .save(consumer, rl("rich_iron_ore_to_ingots"));
     }
 
     private void craftingShaped(Consumer<IFinishedRecipe> consumer) {

@@ -1,7 +1,6 @@
 package com.khanhpham.common.machine.oreenricher;
 
 import com.khanhpham.api.ISpeedUpgrade;
-import com.khanhpham.api.IUpgradeable;
 import com.khanhpham.common.LangKeys;
 import com.khanhpham.common.items.AbstractSpeedUpgrade;
 import com.khanhpham.common.recipe.OreEnriching;
@@ -9,7 +8,6 @@ import com.khanhpham.registries.RecipeTypeRegistries;
 import com.khanhpham.registries.TileEntityRegistries;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
@@ -19,6 +17,7 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.LockableLootTileEntity;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
@@ -65,9 +64,9 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
                         EnricherTile.this.isElementCharged = value;
                 case 3:
                     if (value > 3 || value < 0)
-                    throw new IllegalStateException("isSpeedUpgraded (3) can not different with 0 - 1");
-                else
-                    EnricherTile.this.isSpeedUpgraded = value;
+                        throw new IllegalStateException("isSpeedUpgraded (3) can not different with 0 - 1");
+                    else
+                        EnricherTile.this.isSpeedUpgraded = value;
             }
         }
 
@@ -97,7 +96,12 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
                         processingCurrentTick = applyUpgrade(items, processingCurrentTick);
                     } else
                         ++processingCurrentTick;
-                    if (processingCurrentTick == maxTickPerItem) {
+
+                    if (canProcessFromRecipe(recipe)) {
+                        level.setBlock(worldPosition, level.getBlockState(worldPosition).setValue(OreEnricher.WORKING, isWorking()),3);
+                    }
+
+                    if (processingCurrentTick >= maxTickPerItem) {
                         processingCurrentTick = 0;
                         processing(recipe);
                     }
@@ -109,9 +113,13 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
                 processingCurrentTick = 0;
             }
         }
+
         setChanged();
     }
 
+    private boolean isWorking() {
+        return processingCurrentTick < maxTickPerItem;
+    }
 
     private boolean isSpeedUpgraded(NonNullList<ItemStack> items) {
         return items.get(3).getItem() instanceof AbstractSpeedUpgrade;
@@ -171,7 +179,7 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
             return null;
         }
         assert level != null;
-        return level.getRecipeManager().getRecipeFor(RecipeTypeRegistries.ORE_ENRICHING, (IInventory) this, level).orElse(null);
+        return level.getRecipeManager().getRecipeFor(RecipeTypeRegistries.ORE_ENRICHING, this, level).orElse(null);
     }
 
     @Override
@@ -192,7 +200,7 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
     @Override
     public CompoundNBT save(CompoundNBT compound) {
         super.save(compound);
-        compound.putInt("ProcessingCurrentTime", processingCurrentTick);
+        compound.putInt("ProcessingCurrentTick", processingCurrentTick);
         compound.putInt("MaxTimePerItemProcessing", maxTickPerItem);
         compound.putInt("IsContainsElement", isElementCharged);
         compound.putInt("IsSpeedUpgraded", isSpeedUpgraded);
