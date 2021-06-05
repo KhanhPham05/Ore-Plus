@@ -6,4 +6,5 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 public class LangKeys {
     public static final ITextComponent ENRICHER_SCREEN = new TranslationTextComponent("container." + RawOres.MODID + ".enricher");
+    public static final ITextComponent PROCESSOR_SCREEN = new TranslationTextComponent("container." + RawOres.MODID + ".processor");
 }

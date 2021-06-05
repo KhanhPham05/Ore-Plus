@@ -27,8 +27,6 @@ public class OreEnriching implements IRecipe<IInventory> {
     public final ItemStack output;
     private final ResourceLocation id;
 
-
-
     private final Ingredient element = Ingredient.of(ItemRegistries.ENRICHING_ELEMENT.get());
 
     public OreEnriching(Ingredient input, ItemStack output, ResourceLocation id) {
@@ -101,10 +99,7 @@ public class OreEnriching implements IRecipe<IInventory> {
             setRegistryName(RawOres.MODID, "ore_enriching");
         }
 
-        /**
-         * @see com.google.gson.JsonArray
-         * @see CookingRecipeSerializer
-         */
+        @SuppressWarnings("deprecation")
         @Override
         public OreEnriching fromJson(ResourceLocation id, JsonObject json) {
             final JsonElement inputEl = JSONUtils.isArrayNode(json, "inputs")

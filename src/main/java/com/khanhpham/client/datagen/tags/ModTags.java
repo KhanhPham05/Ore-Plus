@@ -31,9 +31,9 @@ public class ModTags extends ItemTagsProvider {
     @Override
     protected void addTags() {
         this.tag(IRON).add(ItemRegistries.IRON_RAW_ORE.get());
-        this.tag(COPPER).add(ItemRegistries.COPPER_RAW_ORE.get());
+        /*this.tag(COPPER).add(ItemRegistries.COPPER_RAW_ORE.get());
         this.tag(DIAMOND).add(ItemRegistries.RAW_DIAMOND.get());
-        this.tag(GOLD).add(ItemRegistries.GOLD_RAW_ORE.get());
+        this.tag(GOLD).add(ItemRegistries.GOLD_RAW_ORE.get());*/
     }
 
     @Override

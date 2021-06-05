@@ -1,9 +1,9 @@
 package com.khanhpham.common.machine.oreenricher;
 
-import com.khanhpham.api.ElementSlot;
-import com.khanhpham.api.IngredientSlot;
-import com.khanhpham.api.OutputSlot;
-import com.khanhpham.api.UpgradeSlot;
+import com.khanhpham.api.slots.ElementSlot;
+import com.khanhpham.api.slots.IngredientSlot;
+import com.khanhpham.api.slots.OutputSlot;
+import com.khanhpham.api.slots.UpgradeSlot;
 import com.khanhpham.registries.ContainerRegistries;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -60,7 +60,7 @@ public class EnricherContainer extends Container {
         this(id, inv, getTileEntity(inv, buffer), new IntArray(4));
     }
 
-    private static EnricherTile getTileEntity(final PlayerInventory playerInv, final PacketBuffer data) {
+    public static EnricherTile getTileEntity(final PlayerInventory playerInv, final PacketBuffer data) {
         Objects.requireNonNull(playerInv, "Player Inventory cannot be null.");
         Objects.requireNonNull(data, "Packet Buffer cannot be null.");
         final TileEntity te = playerInv.player.level.getBlockEntity(data.readBlockPos());

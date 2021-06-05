@@ -18,12 +18,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class OreEnrichingRecipeBuilder {
     private final Ingredient input;
     private final Item output;
-    private final Advancement.Builder advancement = Advancement.Builder.advancement();
+    private final Advancement.Builder advancement
+            = Advancement.Builder.advancement();
 
     private OreEnrichingRecipeBuilder(Ingredient input, Item output) {
         this.input = input;
@@ -94,7 +96,7 @@ public class OreEnrichingRecipeBuilder {
 
         @Override
         public IRecipeSerializer<?> getType() {
-            return ForgeRegistries.RECIPE_SERIALIZERS.getValue(new ResourceLocation(RawOres.MODID, "ore_enriching"));
+            return Objects.requireNonNull(ForgeRegistries.RECIPE_SERIALIZERS.getValue(new ResourceLocation(RawOres.MODID, "ore_enriching")));
             //return serializer;
         }
 

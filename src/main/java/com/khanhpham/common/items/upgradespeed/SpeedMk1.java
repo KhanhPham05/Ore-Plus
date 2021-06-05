@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 public class SpeedMk1 extends AbstractSpeedUpgrade {
     @Override
     public int setEffect() {
-        return 1;
+        return 2;
     }
 
     @Override
