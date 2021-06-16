@@ -1,0 +1,17 @@
+{
+  "block.oreplus.enriching_element_ore": "Element Ore",
+  "block.oreplus.ore_enricher": "Ore Enricher",
+  "block.oreplus.ore_processor": "Ore Processor",
+  "block.oreplus.rich_iron_ore": "Enriched Iron Ore",
+  "container.oreplus.enricher": "Ore Enricher",
+  "container.oreplus.processor": "Ore Processor",
+  "desc.oreplus.ore_enricher": "A fuel-based machine use Enriching Element to turn normal ore to enriched ore",
+  "desc.oreplus.ore_processor": "A fuel-based machine for duplicate ore processing from rich ore",
+  "desc.oreplus.processor_line_2": "fuel can be any burnable items in furnace",
+  "enchantment.oreplus.rich_mining": "Rich Mining",
+  "item.oreplus.enriching_element": "Enriching Element",
+  "item.oreplus.raw_iron": "Raw Iron Ore",
+  "item.oreplus.speed_upgrade_mk_1": "Speed Upgrade MK 1",
+  "jei.oreplus.ore_enriching": "Ore Enriching",
+  "jei.oreplus.ore_processing": "Ore Processing"
+}

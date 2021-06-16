@@ -1,6 +1,6 @@
 package com.khanhpham.common.machine.oreenricher;
 
-import com.khanhpham.RawOres;
+import com.khanhpham.OrePlusLT;
 import com.khanhpham.common.LangKeys;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -17,7 +17,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class EnricherScreen extends ContainerScreen<EnricherContainer> {
 
-    public static final ResourceLocation GUI = new ResourceLocation(RawOres.MODID, "textures/gui/enricher_new.png");
+    public static final ResourceLocation GUI = new ResourceLocation(OrePlusLT.MODID, "textures/gui/enricher_new.png");
 
     public EnricherScreen(EnricherContainer menu, PlayerInventory playerInventory, ITextComponent translate) {
         super(menu, playerInventory, translate);

@@ -1,39 +1,42 @@
 package com.khanhpham.common.machine.oreenricher;
 
-import com.khanhpham.registries.TileEntityRegistries;
+import com.khanhpham.common.LangKeys;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.particles.ParticleTypes;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-import java.util.Random;
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * @see AbstractFurnaceBlock
+ * @see Blocks
  */
-public class OreEnricher extends ContainerBlock {
+public class OreEnricher extends Block {
     public static final DirectionProperty FACING = HorizontalBlock.FACING;
     public static final BooleanProperty WORKING = BlockStateProperties.LIT;
+    public static final BooleanProperty ELEMENT_CHARGED = BooleanProperty.create("element");
 
     public OreEnricher() {
         super(AbstractBlock.Properties.of(Material.METAL)
@@ -41,8 +44,10 @@ public class OreEnricher extends ContainerBlock {
                 .harvestTool(ToolType.PICKAXE)
                 .harvestLevel(2)
                 .strength(3)
-                .noOcclusion()
-                .requiresCorrectToolForDrops());
+                .requiresCorrectToolForDrops()
+                .lightLevel(state -> state.getValue(BlockStateProperties.LIT) ? 14 : 0)
+        );
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WORKING, Boolean.FALSE));
     }
 
 
@@ -59,9 +64,20 @@ public class OreEnricher extends ContainerBlock {
         }
     }
 
+    @SuppressWarnings("deprecation")
+    public BlockRenderType getRenderShape(BlockState p_149645_1_) {
+        return BlockRenderType.MODEL;
+    }
+
     @Override
     public boolean hasTileEntity(BlockState state) {
         return true;
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+        return new EnricherTile();
     }
 
     @SuppressWarnings("deprecation")
@@ -77,34 +93,18 @@ public class OreEnricher extends ContainerBlock {
         return ActionResultType.SUCCESS;
     }
 
-    @Override
-    public TileEntity newBlockEntity(IBlockReader p_196283_1_) {
-        return TileEntityRegistries.ENRICHER_TILE.get().create();
-    }
 
     public BlockState getStateForPlacement(BlockItemUseContext p_196258_1_) {
         return this.defaultBlockState().setValue(FACING, p_196258_1_.getHorizontalDirection().getOpposite());
     }
 
-    //Try to copy / paste from vanilla code
-    @OnlyIn(Dist.CLIENT)
-    public void animateTick(BlockState p_180655_1_, World p_180655_2_, BlockPos p_180655_3_, Random p_180655_4_) {
-        if (p_180655_1_.getValue(WORKING)) {
-            double d0 = (double)p_180655_3_.getX() + 0.5D;
-            double d1 = p_180655_3_.getY();
-            double d2 = (double)p_180655_3_.getZ() + 0.5D;
-            Direction direction = p_180655_1_.getValue(FACING);
-            Direction.Axis directionAxis = direction.getAxis();
-            double d4 = p_180655_4_.nextDouble() * 0.6D - 0.3D;
-            double d5 = directionAxis == Direction.Axis.X ? (double)direction.getStepX() * 0.52D : d4;
-            double d6 = p_180655_4_.nextDouble() * 6.0D / 16.0D;
-            double d7 = directionAxis == Direction.Axis.Z ? (double)direction.getStepZ() * 0.52D : d4;
-            p_180655_2_.addParticle(ParticleTypes.SMOKE, d0 + d5, d1 + d6, d2 + d7, 0.0D, 0.0D, 0.0D);
-            p_180655_2_.addParticle(ParticleTypes.FLAME, d0 + d5, d1 + d6, d2 + d7, 0.0D, 0.0D, 0.0D);
-        }
-    }
 
     protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> p_206840_1_) {
         p_206840_1_.add(FACING, WORKING);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack p_190948_1_, @Nullable IBlockReader p_190948_2_, List<ITextComponent> p_190948_3_, ITooltipFlag p_190948_4_) {
+        p_190948_3_.add(LangKeys.ENRICHER_DESC);
     }
 }

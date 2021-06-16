@@ -1,6 +1,6 @@
 package com.khanhpham.common.items;
 
-import com.khanhpham.RawOres;
+import com.khanhpham.OrePlusLT;
 import com.khanhpham.api.ISpeedUpgrade;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -11,7 +11,7 @@ public abstract class AbstractSpeedUpgrade extends Item implements ISpeedUpgrade
         super(new Item.Properties()
                 .setNoRepair()
                 .stacksTo(1)
-                .tab(RawOres.RAW_ORES)
+                .tab(OrePlusLT.RAW_ORES)
                 .rarity(Rarity.UNCOMMON)
         );
     }

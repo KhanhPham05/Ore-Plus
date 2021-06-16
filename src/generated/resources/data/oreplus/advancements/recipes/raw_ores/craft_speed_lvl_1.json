@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "oreplus:craft_speed_lvl_1"
+    ]
+  },
+  "criteria": {
+    "has_redstone_and_sugar": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:sugar"
+          },
+          {
+            "item": "minecraft:redstone"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "oreplus:craft_speed_lvl_1"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_redstone_and_sugar",
+      "has_the_recipe"
+    ]
+  ]
+}

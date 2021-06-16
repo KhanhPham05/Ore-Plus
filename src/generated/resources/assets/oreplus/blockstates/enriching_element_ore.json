@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "oreplus:block/enriching_element_ore"
+    }
+  }
+}

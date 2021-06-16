@@ -1,6 +1,6 @@
 package com.khanhpham.common.machine.oreprocessor;
 
-import com.khanhpham.RawOres;
+import com.khanhpham.OrePlusLT;
 import com.khanhpham.common.LangKeys;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -9,8 +9,9 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
+//block GUI
 public class ProcessorScreen extends ContainerScreen<ProcessorContainer> {
-    public static final ResourceLocation SCREEN_ID = new ResourceLocation(RawOres.MODID, "textures/gui/ore_processor.png");
+    public static final ResourceLocation SCREEN_ID = new ResourceLocation(OrePlusLT.MODID, "textures/gui/ore_processor.png");
 
     public ProcessorScreen(ProcessorContainer p_i51105_1_, PlayerInventory p_i51105_2_, ITextComponent p_i51105_3_) {
         super(p_i51105_1_, p_i51105_2_, p_i51105_3_);

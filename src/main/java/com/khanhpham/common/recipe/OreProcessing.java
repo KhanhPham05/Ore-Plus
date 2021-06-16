@@ -2,7 +2,7 @@ package com.khanhpham.common.recipe;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.khanhpham.RawOres;
+import com.khanhpham.OrePlusLT;
 import com.khanhpham.registries.BlockRegistries;
 import com.khanhpham.registries.RecipeTypeRegistries;
 import net.minecraft.inventory.IInventory;
@@ -83,14 +83,14 @@ public class OreProcessing implements IRecipe<IInventory> {
     public static final class Type implements IRecipeType<OreProcessing> {
         @Override
         public String toString() {
-            return RawOres.MODID + ":ore_processing";
+            return OrePlusLT.MODID + ":ore_processing";
         }
     }
 
     public static final class Serializers extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<OreProcessing> {
 
         public Serializers() {
-            setRegistryName(RawOres.MODID, "ore_processing");
+            setRegistryName(OrePlusLT.MODID, "ore_processing");
         }
 
         /**

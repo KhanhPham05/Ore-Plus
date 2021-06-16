@@ -13,11 +13,11 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.LockableLootTileEntity;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
@@ -29,8 +29,8 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
 
     protected static final int slots = 6;
     private NonNullList<ItemStack> items = NonNullList.withSize(slots, ItemStack.EMPTY);
-    private int maxTickPerItem = 160;
-    private int processingCurrentTick = 0;
+    private int maxTick = 160;
+    private int currentTick = 0;
     private int isElementCharged;
     private int isSpeedUpgraded;
     private final IIntArray blockData = new IIntArray() {
@@ -38,9 +38,9 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
         public int get(int index) {
             switch (index) {
                 case 0:
-                    return EnricherTile.this.processingCurrentTick;
+                    return EnricherTile.this.currentTick;
                 case 1:
-                    return EnricherTile.this.maxTickPerItem;
+                    return EnricherTile.this.maxTick;
                 case 2:
                     return EnricherTile.this.isElementCharged;
                 case 3:
@@ -54,9 +54,9 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
         public void set(int index, int value) {
             switch (index) {
                 case 0:
-                    EnricherTile.this.processingCurrentTick = value;
+                    EnricherTile.this.currentTick = value;
                 case 1:
-                    EnricherTile.this.maxTickPerItem = value;
+                    EnricherTile.this.maxTick = value;
                 case 2:
                     if (value > 3 || value < 0)
                         throw new IllegalStateException("isElementCharged (2) can not different with 0 - 1");
@@ -80,6 +80,10 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
         super(TileEntityRegistries.ENRICHER_TILE.get());
     }
 
+    /**
+     * @see AbstractFurnaceTileEntity#tick()
+     * @see Math#PI
+     */
     @Override
     public void tick() {
         assert level != null;
@@ -93,32 +97,26 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
                 OreEnriching recipe = getRecipe();
                 if (canProcessFromRecipe(recipe)) {
                     if (isSpeedUpgraded(items)) {
-                        processingCurrentTick = applyUpgrade(items, processingCurrentTick);
+                        currentTick = applyUpgrade(items, currentTick);
                     } else
-                        ++processingCurrentTick;
-
-                    if (canProcessFromRecipe(recipe)) {
-                        level.setBlock(worldPosition, level.getBlockState(worldPosition).setValue(OreEnricher.WORKING, isWorking()),3);
-                    }
-
-                    if (processingCurrentTick >= maxTickPerItem) {
-                        processingCurrentTick = 0;
+                        ++currentTick;
+                        level.setBlock(worldPosition, level.getBlockState(worldPosition).setValue(OreEnricher.WORKING, Boolean.TRUE),3);
+                    if (currentTick >= maxTick) {
+                        currentTick = 0;
                         processing(recipe);
                     }
                 } else {
-                    processingCurrentTick = 0;
+                    level.setBlock(worldPosition, level.getBlockState(worldPosition).setValue(OreEnricher.WORKING, Boolean.FALSE),3);
+                    currentTick = 0;
                     setChanged();
                 }
             } else {
-                processingCurrentTick = 0;
+                level.setBlock(worldPosition, level.getBlockState(worldPosition).setValue(OreEnricher.WORKING, Boolean.FALSE),3);
+                currentTick = 0;
             }
         }
 
         setChanged();
-    }
-
-    private boolean isWorking() {
-        return processingCurrentTick < maxTickPerItem;
     }
 
     private boolean isSpeedUpgraded(NonNullList<ItemStack> items) {
@@ -186,8 +184,8 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
     public void load(BlockState state, CompoundNBT nbt) {
         super.load(state, nbt);
         ItemStackHelper.loadAllItems(nbt, this.items);
-        processingCurrentTick = nbt.getInt("ProcessingCurrentTime");
-        maxTickPerItem = nbt.getInt("MaxTimePerItemProcessing");
+        currentTick = nbt.getInt("ProcessingCurrentTime");
+        maxTick = nbt.getInt("MaxTimePerItemProcessing");
         isElementCharged = nbt.getInt("IsContainsElement");
         isSpeedUpgraded = nbt.getInt("IsSpeedUpgraded");
     }
@@ -200,8 +198,8 @@ public class EnricherTile extends LockableLootTileEntity implements ITickableTil
     @Override
     public CompoundNBT save(CompoundNBT compound) {
         super.save(compound);
-        compound.putInt("ProcessingCurrentTick", processingCurrentTick);
-        compound.putInt("MaxTimePerItemProcessing", maxTickPerItem);
+        compound.putInt("ProcessingCurrentTick", currentTick);
+        compound.putInt("MaxTimePerItemProcessing", maxTick);
         compound.putInt("IsContainsElement", isElementCharged);
         compound.putInt("IsSpeedUpgraded", isSpeedUpgraded);
         ItemStackHelper.saveAllItems(compound, items);

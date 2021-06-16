@@ -1,0 +1,7 @@
+{
+  "type": "oreplus:ore_enriching",
+  "inputs": {
+    "item": "minecraft:iron_ore"
+  },
+  "output": "oreplus:rich_iron_ore"
+}

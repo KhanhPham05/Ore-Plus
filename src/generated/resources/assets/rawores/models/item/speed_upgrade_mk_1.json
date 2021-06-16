@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "rawores:item/speed_upgrade_mk_1"
-  }
-}

@@ -1,6 +1,6 @@
 package com.khanhpham.api;
 
-import com.khanhpham.RawOres;
+import com.khanhpham.OrePlusLT;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -17,7 +17,7 @@ public class TranslationUtils {
     }
 
     public static IFormattableTextComponent translate(String prefix, String suffix, Object... params) {
-        String key = String.format("%s.%s.%s", prefix, RawOres.MODID, suffix);
+        String key = String.format("%s.%s.%s", prefix, OrePlusLT.MODID, suffix);
         return new TranslationTextComponent(key, params);
     }
 }

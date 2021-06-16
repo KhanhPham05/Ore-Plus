@@ -1,8 +1,0 @@
-{
-  "type": "rawores:ore_processing",
-  "inputs": {
-    "item": "rawores:rich_iron_ore"
-  },
-  "output": "minecraft:iron_ingot",
-  "count": 2
-}
