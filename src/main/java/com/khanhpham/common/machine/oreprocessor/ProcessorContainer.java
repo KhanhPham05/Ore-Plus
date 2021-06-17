@@ -17,6 +17,7 @@ import net.minecraft.util.IntArray;
 
 import java.util.Objects;
 
+//slots for block gui
 public class ProcessorContainer extends Container {
     private final IIntArray data;
 

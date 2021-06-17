@@ -5,26 +5,23 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.khanhpham.RawOres;
+import com.khanhpham.OrePlusLT;
 import com.khanhpham.registries.BlockRegistries;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.data.*;
-import net.minecraft.data.BlockModelProvider;
-import net.minecraft.item.Item;
-import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
-import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -42,14 +39,12 @@ public class ModelProvider {
 
     public static final class Item extends net.minecraftforge.client.model.generators.ItemModelProvider {
         public Item(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-            super(generator, RawOres.MODID, existingFileHelper);
+            super(generator, OrePlusLT.MODID, existingFileHelper);
         }
 
         @Override
         protected void registerModels() {
-            block("rich_iron_ore");
-            block("raw_iron_block");
-
+            //block("rich_iron_ore");
             ModelFile file = getExistingFile(mcLoc("item/generated"));
             build(file, "raw_iron");
             build(file, "enriching_element");
@@ -75,14 +70,13 @@ public class ModelProvider {
     }
 
     public static final class BlockState extends BlockStateProvider {
-        public BlockState(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-            super(generator, RawOres.MODID, existingFileHelper);
-            this.generator = generator;
-        }
-
-        private final DataGenerator generator;
         private static final Logger LOGGER = LogManager.getLogger();
         private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
+        private final DataGenerator generator;
+        public BlockState(DataGenerator generator, ExistingFileHelper existingFileHelper) {
+            super(generator, OrePlusLT.MODID, existingFileHelper);
+            this.generator = generator;
+        }
 
         @SuppressWarnings("deprecation")
         @Override
@@ -158,6 +152,8 @@ public class ModelProvider {
     }
 
     private static final class BlockModels extends BlockModelProvider {
+        private final Consumer<IFinishedBlockState> blockStateOutput;
+        private final BiConsumer<ResourceLocation, Supplier<JsonElement>> modelOutput;
         public BlockModels(Consumer<IFinishedBlockState> p_i232514_1_, BiConsumer<ResourceLocation, Supplier<JsonElement>> p_i232514_2_, Consumer<net.minecraft.item.Item> p_i232514_3_) {
             super(p_i232514_1_, p_i232514_2_, p_i232514_3_);
 
@@ -165,44 +161,41 @@ public class ModelProvider {
             modelOutput = p_i232514_2_;
         }
 
-        private final Consumer<IFinishedBlockState> blockStateOutput;
-        private final BiConsumer<ResourceLocation, Supplier<JsonElement>> modelOutput;
-
-        private void createFurnace(Block p_239977_1_, TexturedModel.ISupplier p_239977_2_) {
-            ResourceLocation resourcelocation = p_239977_2_.create(p_239977_1_, this.modelOutput);
-            ResourceLocation resourcelocation1 = ModelTextures.getBlockTexture(p_239977_1_, "_front_on");
-            ResourceLocation resourcelocation2 = p_239977_2_.get(p_239977_1_).updateTextures((p_239963_1_) -> {
-                p_239963_1_.put(StockTextureAliases.FRONT, resourcelocation1);
-            }).createWithSuffix(p_239977_1_, "_on", this.modelOutput);
-            this.blockStateOutput.accept(FinishedVariantBlockState.multiVariant(p_239977_1_).with(createBooleanModelDispatch(BlockStateProperties.LIT, resourcelocation2, resourcelocation)).with(createHorizontalFacingDispatch()));
+        private static BlockStateVariantBuilder createBooleanModelDispatch(ResourceLocation p_239894_1_, ResourceLocation p_239894_2_) {
+            return BlockStateVariantBuilder.property(BlockStateProperties.LIT).select(true, BlockModelDefinition.variant().with(BlockModelFields.MODEL, p_239894_1_)).select(false, BlockModelDefinition.variant().with(BlockModelFields.MODEL, p_239894_2_));
         }
 
-        private static BlockStateVariantBuilder createBooleanModelDispatch(BooleanProperty p_239894_0_, ResourceLocation p_239894_1_, ResourceLocation p_239894_2_) {
-            return BlockStateVariantBuilder.property(p_239894_0_).select(true, BlockModelDefinition.variant().with(BlockModelFields.MODEL, p_239894_1_)).select(false, BlockModelDefinition.variant().with(BlockModelFields.MODEL, p_239894_2_));
-        }
         private static BlockStateVariantBuilder createHorizontalFacingDispatch() {
             return BlockStateVariantBuilder.property(BlockStateProperties.HORIZONTAL_FACING).select(Direction.EAST, BlockModelDefinition.variant().with(BlockModelFields.Y_ROT, BlockModelFields.Rotation.R90)).select(Direction.SOUTH, BlockModelDefinition.variant().with(BlockModelFields.Y_ROT, BlockModelFields.Rotation.R180)).select(Direction.WEST, BlockModelDefinition.variant().with(BlockModelFields.Y_ROT, BlockModelFields.Rotation.R270)).select(Direction.NORTH, BlockModelDefinition.variant());
-        }
-
-        private void createTrivialCube(Block p_239975_1_) {
-            this.createTrivialBlock(p_239975_1_, TexturedModel.CUBE);
-        }
-
-        private void createTrivialBlock(Block p_239956_1_, TexturedModel.ISupplier p_239956_2_) {
-            this.blockStateOutput.accept(createSimpleBlock(p_239956_1_, p_239956_2_.create(p_239956_1_, this.modelOutput)));
         }
 
         private static FinishedVariantBlockState createSimpleBlock(Block p_239978_0_, ResourceLocation p_239978_1_) {
             return FinishedVariantBlockState.multiVariant(p_239978_0_, BlockModelDefinition.variant().with(BlockModelFields.MODEL, p_239978_1_));
         }
 
+        private void createFurnace(Block p_239977_1_, TexturedModel.ISupplier p_239977_2_) {
+            ResourceLocation resourcelocation = p_239977_2_.create(p_239977_1_, this.modelOutput);
+            ResourceLocation frontOn = ModelTextures.getBlockTexture(p_239977_1_, "_front_on");
+            ResourceLocation rl2 = p_239977_2_.get(p_239977_1_).updateTextures((p_239963_1_) -> {
+                p_239963_1_.put(StockTextureAliases.FRONT, frontOn);
+            }).createWithSuffix(p_239977_1_, "_on", this.modelOutput);
+            this.blockStateOutput.accept(FinishedVariantBlockState.multiVariant(p_239977_1_).with(createBooleanModelDispatch(rl2, resourcelocation)).with(createHorizontalFacingDispatch()));
+        }
+
+        private void createTrivialCube(Block p_239975_1_) {
+            this.createTrivialBlock(p_239975_1_);
+        }
+
+        private void createTrivialBlock(Block p_239956_1_) {
+            this.blockStateOutput.accept(createSimpleBlock(p_239956_1_, TexturedModel.CUBE.create(p_239956_1_, this.modelOutput)));
+        }
 
         @Override
         public void run() {
             createFurnace(BlockRegistries.ORE_ENRICHER.get(), TexturedModel.ORIENTABLE_ONLY_TOP);
             createFurnace(BlockRegistries.ORE_PROCESSOR.get(), TexturedModel.ORIENTABLE_ONLY_TOP);
-            createTrivialCube(BlockRegistries.RAW_IRON_BLOCK.get());
             createTrivialCube(BlockRegistries.RICH_IRON_ORE.get());
+            createTrivialCube(BlockRegistries.ELEMENT_ORE.get());
         }
     }
 }

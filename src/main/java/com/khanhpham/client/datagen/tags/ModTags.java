@@ -1,6 +1,6 @@
 package com.khanhpham.client.datagen.tags;
 
-import com.khanhpham.RawOres;
+import com.khanhpham.OrePlusLT;
 import com.khanhpham.registries.ItemRegistries;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
@@ -21,7 +21,7 @@ public class ModTags extends ItemTagsProvider {
         super(data, blockTag, modId, existingFileHelper);
     }
 
-    private static final TagRegistry<Item> HELPER = TagRegistryManager.create(new ResourceLocation(RawOres.MODID,"item"), ITagCollectionSupplier::getItems);
+    private static final TagRegistry<Item> HELPER = TagRegistryManager.create(new ResourceLocation(OrePlusLT.MODID,"item"), ITagCollectionSupplier::getItems);
 
     public static final ITag.INamedTag<Item> IRON = HELPER.bind("raw_ores/iron");
     public static final ITag.INamedTag<Item> COPPER = HELPER.bind("raw_ores/copper");

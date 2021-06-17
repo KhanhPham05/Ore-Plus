@@ -1,6 +1,6 @@
 package com.khanhpham.events;
 
-import com.khanhpham.RawOres;
+import com.khanhpham.OrePlusLT;
 import com.khanhpham.common.machine.oreenricher.EnricherScreen;
 import com.khanhpham.common.machine.oreprocessor.ProcessorScreen;
 import com.khanhpham.registries.ContainerRegistries;
@@ -10,7 +10,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-@Mod.EventBusSubscriber(modid = RawOres.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = OrePlusLT.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientEvents {
 
     private ClientEvents(){}

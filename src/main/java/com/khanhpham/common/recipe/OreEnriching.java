@@ -2,7 +2,7 @@ package com.khanhpham.common.recipe;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.khanhpham.RawOres;
+import com.khanhpham.OrePlusLT;
 import com.khanhpham.registries.BlockRegistries;
 import com.khanhpham.registries.ItemRegistries;
 import com.khanhpham.registries.RecipeTypeRegistries;
@@ -21,6 +21,7 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
  * @see net.minecraft.inventory.IRecipeHolder
  * @see net.minecraft.inventory.container.FurnaceContainer
  * @see CookingRecipeSerializer
+ * @see ICraftingRecipe
  */
 public class OreEnriching implements IRecipe<IInventory> {
     public final Ingredient input;
@@ -90,13 +91,13 @@ public class OreEnriching implements IRecipe<IInventory> {
     public static final class Type implements IRecipeType<OreEnriching> {
         @Override
         public String toString() {
-            return RawOres.MODID + ":ore_enriching";
+            return OrePlusLT.MODID + ":ore_enriching";
         }
     }
 
     public static final class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<OreEnriching> {
         public Serializer() {
-            setRegistryName(RawOres.MODID, "ore_enriching");
+            setRegistryName(OrePlusLT.MODID, "ore_enriching");
         }
 
         @SuppressWarnings("deprecation")

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "oreplus:block/ore_processor_top",
+    "front": "oreplus:block/ore_processor_front_on",
+    "side": "oreplus:block/ore_processor_side"
+  }
+}

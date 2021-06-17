@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "oreplus:craft_processor"
+    ]
+  },
+  "criteria": {
+    "criterion_3": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:iron_ingot"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "oreplus:craft_processor"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "criterion_3",
+      "has_the_recipe"
+    ]
+  ]
+}

@@ -13,7 +13,7 @@ apply plugin: 'maven-publish'
 
 version = '1.1'
 group = 'com.khanhpham'
-archivesBaseName = 'RawOres'
+archivesBaseName = 'OrePlusLT'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
 
@@ -29,7 +29,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                rawores {
+                oreplus {
                     source sourceSets.main
                 }
             }
@@ -42,7 +42,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                rawores {
+                oreplus {
                     source sourceSets.main
                 }
             }
@@ -60,7 +60,7 @@ minecraft {
                     '--output', file('src/generated/resources/')
 
             mods {
-                rawores {
+                oreplus {
                     source sourceSets.main
                 }
             }
@@ -92,7 +92,7 @@ dependencies {
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "rawores",
+                "Specification-Title"     : "oreplus",
                 "Specification-Vendor"    : "examplemodsareus",
                 "Specification-Version"   : "1", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,

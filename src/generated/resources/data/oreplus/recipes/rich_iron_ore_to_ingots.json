@@ -1,0 +1,8 @@
+{
+  "type": "oreplus:ore_processing",
+  "inputs": {
+    "item": "oreplus:rich_iron_ore"
+  },
+  "output": "minecraft:iron_ingot",
+  "count": 2
+}

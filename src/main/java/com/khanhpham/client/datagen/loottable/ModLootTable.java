@@ -1,7 +1,7 @@
 package com.khanhpham.client.datagen.loottable;
 
 import com.google.common.collect.ImmutableList;
-import com.khanhpham.RawOres;
+import com.khanhpham.OrePlusLT;
 import com.khanhpham.registries.BlockRegistries;
 import com.khanhpham.registries.EnchantRegistries;
 import com.khanhpham.registries.ItemRegistries;
@@ -14,12 +14,11 @@ import net.minecraft.block.Blocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.LootTableProvider;
 import net.minecraft.data.loot.BlockLootTables;
-import net.minecraft.data.loot.ChestLootTables;
-import net.minecraft.item.Items;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.loot.*;
 import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.loot.conditions.MatchTool;
-import net.minecraft.loot.functions.EnchantRandomly;
+import net.minecraft.loot.functions.ApplyBonus;
 import net.minecraft.loot.functions.SetCount;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
@@ -52,7 +51,7 @@ public class ModLootTable extends LootTableProvider {
 
     @Override
     public String getName() {
-        return RawOres.MODID + " Loot Tables Providers";
+        return OrePlusLT.MODID + " Loot Tables Providers";
     }
 
     public static final class ModBlockLoot extends BlockLootTables {
@@ -65,8 +64,8 @@ public class ModLootTable extends LootTableProvider {
          * */
         @Override
         protected void addTables() {
-            dropSelf(BlockRegistries.RAW_IRON_BLOCK.get());
             add(BlockRegistries.RICH_IRON_ORE.get(), (ore) -> createRichMiningWithSilkTouch(ore, Blocks.IRON_ORE.asItem()));
+            add(BlockRegistries.ELEMENT_ORE.get(), (ore) -> createSilkTouchDispatchTable(ore, applyExplosionDecay(ore, ItemLootEntry.lootTableItem(ItemRegistries.ENRICHING_ELEMENT.get()).apply(SetCount.setCount(RandomValueRange.between(4.0F, 5.0F))).apply(ApplyBonus.addUniformBonusCount(Enchantments.BLOCK_FORTUNE)))));
             dropSelf(BlockRegistries.ORE_ENRICHER.get());
             dropSelf(BlockRegistries.ORE_PROCESSOR.get());
             add(BlockRegistries.ORE_ENRICHER.get(), BlockLootTables::createNameableBlockEntityTable);

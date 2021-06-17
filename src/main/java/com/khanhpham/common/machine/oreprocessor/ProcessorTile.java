@@ -21,6 +21,7 @@ import net.minecraftforge.common.ForgeHooks;
 
 import javax.annotation.Nullable;
 
+//the core of minecraft engine TILE ENTITY
 public class ProcessorTile extends LockableLootTileEntity implements ITickableTileEntity {
     public static final int dataCount = 6;
     public static final int slots = 4;
@@ -105,17 +106,22 @@ public class ProcessorTile extends LockableLootTileEntity implements ITickableTi
                 if (canProcess(recipe)) {
                     if (isSpeedUpgraded(items)) {
                         currentTick = applyUpgrade(items, currentTick);
-                    } else ++currentTick;
+                    } else {
+                        ++currentTick;
+                        level.setBlock(worldPosition, level.getBlockState(worldPosition).setValue(OreProcessor.WORKING, Boolean.TRUE), 3);
+                    }
 
                     if (currentTick >= maxTick) {
                         currentTick = 0;
                         process(recipe);
                     }
                 } else {
+                    level.setBlock(worldPosition, level.getBlockState(worldPosition).setValue(OreProcessor.WORKING, Boolean.FALSE), 3);
                     currentTick = 0;
                     setChanged();
                 }
             } else {
+                level.setBlock(worldPosition, level.getBlockState(worldPosition).setValue(OreProcessor.WORKING, Boolean.FALSE), 3);
                 currentTick = 0;
             }
         }
@@ -162,7 +168,8 @@ public class ProcessorTile extends LockableLootTileEntity implements ITickableTi
 
         } else {
             return false;
-    }}
+        }
+    }
 
     @Nullable
     private OreProcessing getRecipe() {

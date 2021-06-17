@@ -1,8 +1,7 @@
 package com.khanhpham.client.datagen.recipe;
 
 import com.google.gson.JsonObject;
-import com.khanhpham.RawOres;
-import com.khanhpham.common.recipe.OreEnriching;
+import com.khanhpham.OrePlusLT;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.ICriterionInstance;
@@ -96,7 +95,7 @@ public class OreEnrichingRecipeBuilder {
 
         @Override
         public IRecipeSerializer<?> getType() {
-            return Objects.requireNonNull(ForgeRegistries.RECIPE_SERIALIZERS.getValue(new ResourceLocation(RawOres.MODID, "ore_enriching")));
+            return Objects.requireNonNull(ForgeRegistries.RECIPE_SERIALIZERS.getValue(new ResourceLocation(OrePlusLT.MODID, "ore_enriching")));
             //return serializer;
         }
 

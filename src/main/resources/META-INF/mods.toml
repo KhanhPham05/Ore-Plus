@@ -3,8 +3,8 @@ loaderVersion="[36,)"
 license="All rights reserved"
 
 [[mods]] #mandatory
-modId="rawores" #mandatory
+modId="oreplus" #mandatory
 version="${file.jarVersion}" #mandatory
-displayName="Raw Ores" #mandatory
+displayName="Ore Plus Low Tech" #mandatory
 description='''
-Just Raw Ores from 1.17'''
+More Ores, better life, less ore generation'''
